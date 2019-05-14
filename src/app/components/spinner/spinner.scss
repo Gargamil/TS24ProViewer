@@ -1,0 +1,10 @@
+.spinner {
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    --color: var(--ion-color-primary);
+    z-index: 5;
+}

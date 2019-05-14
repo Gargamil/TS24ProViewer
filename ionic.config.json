@@ -1,5 +1,7 @@
 {
   "name": "TS24ProViewer",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

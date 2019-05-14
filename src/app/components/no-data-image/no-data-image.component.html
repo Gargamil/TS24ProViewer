@@ -1,0 +1,15 @@
+<div *ngIf="!showLogin">
+    <img [src]="appSetting.logo_app" width="170" class="img-fluid mx-auto d-block">
+    <div class="text-center">
+      <h3>{{text}}</h3>
+    </div>
+</div>
+<div *ngIf="showLogin" (click) ="onClick()">
+    <img [src]="appSetting.logo_app" width="170" class="img-fluid mx-auto d-block">
+    <div class="text-center">
+        <ion-button color="dark">
+            <ion-icon  slot="start" name="contact"></ion-icon>
+            {{ 'USER_NO_LOGIN_TITLE' | translate }}
+          </ion-button>
+    </div>
+</div>

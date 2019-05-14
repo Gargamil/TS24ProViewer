@@ -1,0 +1,5 @@
+<!-- Generated template for the RatingComponent component -->
+<ion-icon *ngFor="let n of stars; let i = index" 
+[name]="i < rating ? 'star' : 'star-outline'" 
+(click)="onItemClick(i)"  
+[ngStyle]="{'font-size.px': size}"></ion-icon>
