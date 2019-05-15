@@ -6,7 +6,7 @@ import { AppSettings, Commons } from '../services';
  */
 @Injectable()
 export class Api_Master {
-    url: string = '';
+    url: string = 'https://www.xuathoadon.com.vn/tracuu.xhd/';
     _wsTS24: any = {
         url: AppSettings.URL_API,
         header: {

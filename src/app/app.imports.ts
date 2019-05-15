@@ -7,9 +7,12 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Api } from './providers';
-import { Commons, NavControllerService, MenuService } from './services';
+import { Commons, NavControllerService, MenuService, FileSystems } from './services';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
 }
@@ -33,9 +36,13 @@ export const PROVIDERS = [
     Commons,
     NavControllerService,
     MenuService,
+    FileSystems,
     // Ionic native specific providers
     StatusBar,
     SplashScreen,
     InAppBrowser,
     AndroidPermissions,
+    File,
+    FileTransfer,
+    FileChooser
 ];
