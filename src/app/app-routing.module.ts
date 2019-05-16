@@ -9,12 +9,14 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: './home/home.module#HomePageModule'
+    loadChildren: './pages/home/home.module#HomePageModule'
   },
   {
-    path: 'list',
-    loadChildren: './list/list.module#ListPageModule'
-  }
+    path: 'recent',
+    loadChildren: './pages/recent/recent.module#RecentPageModule'
+  },
+  { path: 'export-pdf', loadChildren: './pages/export-pdf/export-pdf.module#ExportPDFPageModule' },
+  { path: 'export-excel', loadChildren: './pages/export-excel/export-excel.module#ExportExcelPageModule' }
 ];
 
 @NgModule({
@@ -23,4 +25,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -1,3 +1,14 @@
 {
-
+    "HOME_PAGE": {
+        "TITLE": "Tài liệu "
+    },
+    "RECENT_PAGE": {
+        "TITLE": "Xem gần đây"
+    },
+    "EXPORTPDF_PAGE": {
+        "TITLE": "Export PDF"
+    },
+    "EXPORTEXCEL_PAGE": {
+        "TITLE": "Export Excel"
+    }
 }

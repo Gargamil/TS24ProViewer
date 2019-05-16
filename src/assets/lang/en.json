@@ -1,3 +1,14 @@
 {
-
+    "HOME_PAGE": {
+        "TITLE": "Documents"
+    },
+    "RECENT_PAGE": {
+        "TITLE": "Recent"
+    },
+    "EXPORTPDF_PAGE": {
+        "TITLE": "Export PDF"
+    },
+    "EXPORTEXCEL_PAGE": {
+        "TITLE": "Export Excel"
+    }
 }

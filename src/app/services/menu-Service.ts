@@ -21,28 +21,19 @@ export class MenuService {
     }
 
     getAllThemes(callBack: (arr: any[]) => any): void {
-        // return [
-        //     {"title" : "Trang chủ", "icon" : "icon-format-align-justify", "component": "", "singlePage":false},
-        //     {"title" : "Hỏi đáp", "icon" : "icon-format-line-spacing", "component":"", "singlePage":false},
-        //     {"title" : "Niêm yết thủ tục hành chính", "icon" : "icon-lock-open-outline", "listView" : false, "component":"", "singlePage":false},
-        //     {"title" : "Tra cứu kết quả thủ tục hành chính", "icon" : "icon-comment-account", "listView" : false, "component":"", "singlePage":false},
-        //     {"title" : "Đánh giá hài lòng", "theme"  : "imageGallery",  "icon" : "icon-apps", "listView" : false, "component":"", "singlePage":false},
-        //     {"title" : "Thông báo", "theme"  : "checkBoxes",  "icon" : "icon-checkbox-marked", "listView" : false, "component":"", "singlePage":false},
-        //     {"title" : "Khuyến mại 24", "theme"  : "splashScreens",  "icon" : "icon-logout", "listView" : false, "component":"", "singlePage":false},
-        //   ];
+        this.translate.get(["HOME_PAGE",
+            "RECENT_PAGE",
+            "EXPORTPDF_PAGE",
+            "EXPORTEXCEL_PAGE"
 
-        this.translate.get(["HOME_TITLE",
-            "HISTORYORDERS_TITLE",
-            "NOTIFICATION_TITLE",
-            "USER_TITLE",
         ]).subscribe(
             (values) => {
-                    callBack([
-                        { "title": values.HOME_TITLE, "icon": "home",  url: '/tabs/home', },
-                        { "title": values.HISTORYORDERS_TITLE, "icon": "list-box",  url: '/tabs/historyOrders',},
-                        { "title": values.NOTIFICATION_TITLE, "icon": "notifications" ,  url: '/tabs/notification',}, //
-                        { "title": values.USER_TITLE, "icon": "contact",  url: '/tabs/user'},
-                    ]);
+                callBack([
+                    { "title": values.HOME_PAGE.TITLE, "icon": "home", url: '/home', },
+                    { "title": values.RECENT_PAGE.TITLE, "icon": "list-box", url: '/recent', },
+                    { "title": values.EXPORTPDF_PAGE.TITLE, "icon": "list-box", url: '/export-pdf', },
+                    { "title": values.EXPORTEXCEL_PAGE.TITLE, "icon": "list-box", url: '/export-excel', }
+                ]);
             });
     }
     getTitle(): string {

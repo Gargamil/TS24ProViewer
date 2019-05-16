@@ -1,33 +1,35 @@
 import { Component } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform, Config } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { MenuService } from './services';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  public appPages = [
-    {
-      title: 'Home',
-      url: '/home',
-      icon: 'home'
-    },
-    {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
-    }
-  ];
-
+  pages: any;
+  activePage: any;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private translate: TranslateService,
+    private menuService: MenuService,
+    private config: Config
   ) {
     this.initializeApp();
+    this.initTranslate();
+    this.loadMenu();
+  }
+
+  loadMenu(translate?: any) {
+    translate = translate || this.translate;
+    this.menuService.getTranslate(translate);
+    this.menuService.getAllThemes((values) => { this.pages = values });
   }
 
   initializeApp() {
@@ -35,5 +37,22 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  initTranslate() {
+    let lang = null;
+    if (localStorage.getItem("lang_key") != undefined || null) {
+      lang = localStorage.getItem("lang_key");
+    } else {
+      lang = "vi"
+    }
+    this.translate.use(lang);
+    this.translate.get(['BACK_BUTTON_TEXT']).subscribe(values => {
+      this.config.set('backButtonText', values.BACK_BUTTON_TEXT);
+    });
+  }
+
+  checkActive(page) {
+    return page == this.activePage;
   }
 }

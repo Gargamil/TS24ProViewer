@@ -1,7 +1,6 @@
 import { Api } from 'src/app/providers';
 import { Component } from '@angular/core';
-import { Commons, FileSystems } from '../services';
-import { TS24PRO_PROGRAM } from '../providers/api_parent_01';
+import { Commons, FileSystems } from 'src/app/services';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
