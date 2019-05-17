@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Commons } from '../services';
 import { Api_Parent_01, TS24PRO_PROGRAM } from './api_parent_01';
 import { Api } from './api';
+import { HTTP } from '@ionic-native/http/ngx';
 /**
  * Api is a generic REST Api handler. Set your API url first.
  */
@@ -11,9 +12,10 @@ export class Api_Parent_02 extends Api_Parent_01 {
     constructor(
         protected http: HttpClient,
         protected Common: Commons,
+        protected httpNavite: HTTP
         // private api: Api
     ) {
-        super(http, Common);
+        super(http, Common, httpNavite);
     }
     //begin-hieu
     CombineXML(xml, element) {
@@ -42,70 +44,44 @@ export class Api_Parent_02 extends Api_Parent_01 {
      * @xml file xml
      */
     GetIdXML(type, xml) {
-        if (type === TS24PRO_PROGRAM.THUE)
-            if (xml.getElementsByTagName('maTKhai')[0])
-                return xml.getElementsByTagName('maTKhai')[0].childNodes[0].nodeValue
-            else return null
-
-        else if (type === TS24PRO_PROGRAM.BHXH)
-            return xml.firstChild.nodeName;
-
-        else if (type === TS24PRO_PROGRAM.INVOICE) {
-            if (xml.getElementsByTagName('inv:userDefines')[0]) {
-                let name: any;
-                let start: any;
-                let end: any;
-                let stringText = xml.getElementsByTagName('inv:userDefines')[0].childNodes[0].nodeValue;
-                start = stringText.indexOf('<inv:MauIn>');
-                if (start != -1) {
-                    start = start + 11;
-                    end = stringText.indexOf('</inv:MauIn>');
+        switch (type) {
+            case TS24PRO_PROGRAM.THUE:
+                if (xml.getElementsByTagName('maTKhai')[0])
+                    return xml.getElementsByTagName('maTKhai')[0].childNodes[0].nodeValue
+                else return null
+            case TS24PRO_PROGRAM.BHXH:
+                if (xml.firstChild.nodeName)
+                    return xml.firstChild.nodeName;
+                else return null;
+            case TS24PRO_PROGRAM.INVOICE:
+                if (xml.getElementsByTagName('inv:userDefines')[0]) {
+                    let name: any;
+                    let start: any;
+                    let end: any;
+                    let stringText = xml.getElementsByTagName('inv:userDefines')[0].childNodes[0].nodeValue;
+                    start = stringText.indexOf('<inv:MauIn>');
+                    if (start != -1) {
+                        start = start + 11;
+                        end = stringText.indexOf('</inv:MauIn>');
+                    }
+                    else {
+                        start = stringText.indexOf('<MauIn>') + 5;
+                        end = stringText.indexOf('<MauIn>');
+                    }
+                    name = stringText.substring(start, end)
+                    return name
                 }
-                else {
-                    start = stringText.indexOf('<MauIn>') + 5;
-                    end = stringText.indexOf('<MauIn>');
-                }
-                name = stringText.substring(start, end)
-                return name
-            }
-            else return null
+                else return null
+            default: return null
         }
-        else return null
-        // console.log(x);
-        // //get value off node: x.childNodes[0].nodeValue;
     }
 
     CheckXML(xml) {
-        // let objCallback: any;
         if (xml.getElementsByTagName('HSoThueDTu')[0])
             return TS24PRO_PROGRAM.THUE
         else if (xml.getElementsByTagName('inv:transaction')[0])
             return TS24PRO_PROGRAM.INVOICE
         else return TS24PRO_PROGRAM.BHXH
-        // else return null
-        //     let name: any;
-        //     let start: any;
-        //     let end: any;
-
-        //     let stringText = xml.getElementsByTagName('inv:userDefines')[0].childNodes[0].nodeValue;
-        //     // if (xml.getElementsByTagName('inv:userDefines')[0])
-        //     start = stringText.indexOf('<inv:MauIn>');
-        //     if (start != -1) {
-        //         start = start + 11;
-        //         end = stringText.indexOf('</inv:MauIn>');
-        //     }
-        //     else {
-        //         start = stringText.indexOf('<MauIn>') + 5;
-        //         end = stringText.indexOf('<MauIn>');
-        //     }
-        //     console.log(`start ${start + 11} end${end}`);
-        //     console.log(stringText.substring(start + 11, end));
-        //     name = stringText.substring(start, end)
-        //     return objCallback = {
-        //         type: TS24PRO_PROGRAM.INVOICE,
-        //         name: name
-        //     }
-        // }
     }
     /**
      * 
@@ -135,38 +111,29 @@ export class Api_Parent_02 extends Api_Parent_01 {
      * @param type type
      */
     DeleteAtribute(type, xml) {
-        if (type == TS24PRO_PROGRAM.THUE) {
-            var x, i, attnode, old_att;
-            xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsi");
-            xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsd");
-            // xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns");
-            // x = xml.getElementsByTagName("HSoThueDTu");
-            // for (i = 0; i < x.length; i++) {
-            //     while (x[i].attributes.length > 0) {
-            //         attnode = x[i].attributes[0];
-            //         old_att = x[i].removeAttributeNode(attnode);
-            //         console.log(attnode, old_att, x[i].attributes[0]);
-            //     }
+        switch (type) {
+            case TS24PRO_PROGRAM.THUE:
+                if (xml.getElementsByTagName('HSoThueDTu')[0].namespaceURI) {
+                    var x, i, attnode, old_att;
+                    xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsi");
+                    xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsd");
 
-            // }
-            // var x = xml.getElementsByTagName("HSoThueDTu");
-            // console.log('check', xml.getElementsByTagName('HSoThueDTu')[0].getAttribute("xmlns:xsi"));
-            // xml.onload = function () {
-            //     if (xml.readyState === xml.DONE && xml.status === 200) {
-            //         console.log(xml.response, xml.responseXML);
-            //     }
-            // };
-            let outer = xml.getElementsByTagName('HSoThueDTu')[0].outerHTML;
-            outer = outer.replace(/xmlns=\"(.*?)\"/g, '');
-            let parser = new DOMParser();
-            xml = parser.parseFromString(outer, "text/xml");
-            console.log(outer);
-            console.log(xml);
-            return xml;
+                    let outer = xml.getElementsByTagName('HSoThueDTu')[0].outerHTML;
+                    outer = outer.replace(/xmlns=\"(.*?)\"/g, '');
+                    let parser = new DOMParser();
+                    xml = parser.parseFromString(outer, "text/xml");
+                    console.log(outer);
+                    console.log(xml);
+                }
+                return xml;
+            case TS24PRO_PROGRAM.INVOICE:
+                if (xml.getElementsByTagName("inv:resend")[0]) {
+                    x = xml.getElementsByTagName("inv:resend")[0];
+                    x.parentNode.removeChild(x);
+                }
+                return xml;
+            default:
+                return xml;
         }
-        else return xml;
-
-        // else if (type == TS24PRO_PROGRAM.BHXH)
-        //     return
     }
 }
