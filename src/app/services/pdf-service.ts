@@ -2,16 +2,18 @@ import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
+import { ConvertFileService } from './convert-file-service';
 
 declare var cordova: any;
 
 @Injectable()
 export class PdfService {
-
+    readonly FILE_SAVE_ERROR: number = 1;
     constructor(
         private file: File,
         public platform: Platform,
-        private filePath: FilePath
+        private filePath: FilePath,
+        private conver: ConvertFileService
     ) { }
 
     /**
@@ -19,7 +21,7 @@ export class PdfService {
      * @param fileName Tên file
      * @param pdfhtml Html content
      */
-    createPdfFromHtmlText(pdfhtml?: any, pdfFileName?: any) {
+    createPdfFromHtmlText(success, error, pdfhtml?: any, pdfFileName?: any) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
 
         var options = {
@@ -38,34 +40,37 @@ export class PdfService {
                 let folderpath = this.file.dataDirectory;
                 if (this.platform.is('android'))
                     folderpath = this.file.externalCacheDirectory;
-                this.savebase64AsPDF(folderpath, pdfFileName, base64, contentType);
+                this.savebase64AsPDF(folderpath, pdfFileName, base64, contentType, success, error);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => error(err));
     }
 
-    createPdfFromHtmlFileUri(fileUri) {
+    /**
+     * Tạo file pdf từ uri
+     * @param fileUri 
+     * @param success 
+     * @param error 
+     */
+    createPdfFromHtmlFileUri(fileUri, success, error) {
         this.file
             .resolveLocalFilesystemUrl(fileUri)
             .then(fileEntry => {
-                console.log(fileEntry);
                 let { name, nativeURL } = fileEntry;
-                console.log(name);
-                console.log(nativeURL);
                 var fileName = name.substring(0, name.lastIndexOf("."));
                 fileName = fileName + ".pdf";
                 if (this.platform.is('android')) {
                     // Chuyển file uri thành file path
                     this.filePath.resolveNativePath(nativeURL)
                         .then((androidPath) => {
-                            console.log(androidPath);
-                            this.createPdfFromHtmlFilePath(androidPath, fileName)
+                            androidPath = this.conver.getAndroidSdcardPath(androidPath, fileEntry.fullPath);
+                            this.createPdfFromHtmlFilePath(androidPath, success, error, fileName)
                         })
-                        .catch(err => console.log(err));
+                        .catch(err => error(err));
                 } else {
-                    this.createPdfFromHtmlFilePath(nativeURL, fileName)
+                    this.createPdfFromHtmlFilePath(nativeURL, success, error, fileName)
                 }
             })
-            .catch((err => console.log(err)));
+            .catch((err => error(err)));
     }
 
     /**
@@ -73,7 +78,7 @@ export class PdfService {
      * @param htmlFilePath Đường dẫn file html
      * @param pdfFileName  Têm file pdf muốn tạo
      */
-    createPdfFromHtmlFilePath(htmlFilePath: string, pdfFileName?: any) {
+    createPdfFromHtmlFilePath(htmlFilePath: string, success, error, pdfFileName?: any) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
         var options = {
             documentSize: 'A4',
@@ -82,15 +87,15 @@ export class PdfService {
             fileName: pdfFileName
         };
 
-        let path = htmlFilePath.substring(0, htmlFilePath.lastIndexOf("/"));
-        console.log(path);
+        let path = htmlFilePath.substring(0, htmlFilePath.lastIndexOf("/") + 1);
+        // console.log(path);
 
         if (this.platform.is('android')) {
             // Tên file trong android
             pdfFileName = (htmlFilePath.substring(htmlFilePath.lastIndexOf("/") + 1));
             pdfFileName = (pdfFileName.substring(0, pdfFileName.lastIndexOf("."))) + ".pdf";
         }
-        console.log(pdfFileName);
+        // console.log(pdfFileName);
 
         cordova.plugins.pdf.fromURL(htmlFilePath, options)
             .then((base64) => {
@@ -99,9 +104,11 @@ export class PdfService {
                 // let folderpath = this.file.dataDirectory;
                 // if (this.platform.is('android'))
                 //     folderpath = this.file.externalCacheDirectory;
-                this.savebase64AsPDF(path, pdfFileName, base64, contentType);
+                this.savebase64AsPDF(path, pdfFileName, base64, contentType, success, error);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                error(err);
+            });
     }
 
     /**
@@ -111,17 +118,45 @@ export class PdfService {
      * @param content content {Base64 String} Important : The content can't contain the following string (data:application/pdf;base64). Only the base64 string is expected.
      * @param contentType 
      */
-    savebase64AsPDF(folderpath, filename, content, contentType) {
+    savebase64AsPDF(folderpath, filename, content, contentType, success, error) {
         // Convert the base64 string in a Blob
         var dataBlob = this.b64toBlob(content, contentType);
 
-        console.log("Starting to write the file :3");
+        // console.log("Starting to write the file :3");
+        this.writeFile(folderpath, filename, dataBlob, success, error, true);
 
+    }
+
+    /**
+     * Ghi file pdf
+     * @param folderpath 
+     * @param filename 
+     * @param dataBlob 
+     * @param success 
+     * @param error 
+     * @param repeat 
+     */
+    private writeFile(folderpath, filename, dataBlob, success, error, repeat: boolean) {
         this.file.writeFile(folderpath, filename, dataBlob, { replace: true })
-            .then(() => {
-                console.log(folderpath + filename);
+            .then((fileEntry) => {
+                success(fileEntry);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(err);
+                if (repeat == true) {
+                    if (err.code == 1 || err.code == 9) {
+                        let path = this.file.dataDirectory;
+                        if (this.platform.is('android'))
+                            path = this.file.externalRootDirectory;
+                        repeat = false;
+                        this.writeFile(path, filename, dataBlob, success, error, repeat)
+                    } else {
+                        error(this.FILE_SAVE_ERROR, err);
+                    }
+                } else {
+                    error(this.FILE_SAVE_ERROR, err);
+                }
+            });
     }
 
     /**

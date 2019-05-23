@@ -1,9 +1,17 @@
+import { ConvertFileService } from './convert-file-service';
 import { Injectable } from '@angular/core';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { File } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Api } from '../providers';
+import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient } from '@angular/common/http';
+import { Commons } from '.';
+import { ResolveEnd } from '@angular/router';
+import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
+import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
+import { ThemeableBrowser, ThemeableBrowserOptions, ThemeableBrowserObject } from '@ionic-native/themeable-browser/ngx';
 declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
@@ -11,7 +19,13 @@ export class FileSystems {
         private file: File,
         public platform: Platform,
         private filePath: FilePath,
-        private api: Api
+        protected http: HttpClient,
+        protected httpNavite: HTTP,
+        public common: Commons,
+        private filePicker: IOSFilePicker,
+        private docViewer: DocumentViewer,
+        private themeableBrowser: ThemeableBrowser,
+        private convertFileSerVice: ConvertFileService
     ) { }
     fileTransfer: FileTransferObject = this.transfer.create();
 
@@ -39,8 +53,33 @@ export class FileSystems {
                 break;
             case 'pdf':
                 fileType = 'application/pdf';
+                break;
             case 'zip':
                 fileType = 'application/zip';
+                break;
+        }
+        return fileType;
+    }
+
+    _convertToUTITypeIOS(fileType: any) {
+        switch (fileType) {
+            case 'doc':
+            case 'docx':
+            case 'xls':
+            case 'xlsx':
+                fileType = 'public.data';
+                break;
+            case 'xml':
+                fileType = 'public.xml';
+                break;
+            case 'htm':
+            case 'html':
+                fileType = 'public.text';
+                break;
+            case 'pdf':
+                fileType = 'public.composite-​content';
+            case 'zip':
+                fileType = 'public.archive';
                 break;
         }
         return fileType;
@@ -154,7 +193,7 @@ export class FileSystems {
     }
 
     /**
-     * 
+     * Mở file trên android
      * @param fileType 
      */
     openFileAndroid(fileType: any) {
@@ -164,6 +203,31 @@ export class FileSystems {
                 fileChooser.open({ "mime": fileType }, resolve, reject);
             else
                 fileChooser.open(resolve, reject);
+        })
+            .then(rs => {
+                return rs
+            })
+    }
+
+    /**
+   * Mở file trên ios
+   * @param fileType 
+   */
+    openFileIOS(fileType: any) {
+        fileType = this._convertToUTITypeIOS(fileType);
+        return new Promise<any>((resolve, reject) => {
+            if (fileType)
+                this.filePicker.pickFile(fileType).then(uri => { resolve(uri) })
+                    .catch(err => {
+                        resolve(null);
+                        console.log('Error', err);
+                    });
+            else
+                this.filePicker.pickFile().then(uri => { resolve(uri) })
+                    .catch(err => {
+                        resolve(null);
+                        console.log('Error', err);
+                    });
         })
             .then(rs => {
                 return rs
@@ -195,16 +259,26 @@ export class FileSystems {
      * @param filepath file return from openFileAndroid()
      */
     GetFileInfo(filepath) {
+        let currentdate = new Date();
         return new Promise((resolve, reject) => {
             let obj = {
                 size: null,
                 path: null,
-                name: null
+                name: null,
+                date: currentdate.getDay() + "/" + currentdate.getMonth()
+                    + "/" + currentdate.getFullYear()
             };
             this.file.resolveLocalFilesystemUrl(filepath)
                 .then(async rs => {
                     obj.size = await this.GetSizeFile(rs);
                     obj.path = rs.nativeURL;
+                    //check if the file get from sdCard
+                    if (this.platform.is("android")) {
+                        let file = rs.name.split(":");
+                        if (file.length > 1) {
+                            rs.name = file[1];
+                        }
+                    }
                     obj.name = rs.name;
                     resolve(obj);
                 })
@@ -213,14 +287,15 @@ export class FileSystems {
                 })
         })
     }
-    private GetSizeFile(file) {
+    public GetSizeFile(file) {
         return new Promise((resolve, reject) => {
             file.getMetadata(metadata => {
                 resolve(metadata.size)
             })
         })
             .then(rs => {
-                return rs
+                // if ()
+                return this.common.formatBytes(rs)
             })
     }
 
@@ -281,17 +356,20 @@ export class FileSystems {
             .catch((err) => { console.log(err) });
     }
 
-    /**
+    /**Lấy content xml từ device.
      * 
      * @param filepath 
      */
     async GetDocXMLFromDevice(filepath) {
+        let fileName = null;
         return new Promise(async (resolve, reject) => {
             if (this.platform.is('android')) {
+                let filepath_temp = filepath;
                 filepath = await this._convertFilePathAndroid(filepath);
                 if (filepath.includes('sdcard')) {
-                    let path = filepath.substring(0, filepath.lastIndexOf("/"));
-                    filepath = filepath.replace(path, path + '/');
+                    let fileName_Origin = this.common.getFileNameFromPath(filepath_temp);
+                    fileName_Origin = decodeURIComponent(fileName_Origin);
+                    filepath = this.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
                 }
             }
             this.file
@@ -302,12 +380,12 @@ export class FileSystems {
                     let path = nativeURL.substring(0, nativeURL.lastIndexOf("/"));
                     console.log("path", path);
                     console.log("fileName", name);
-                    this.api.loadXMLNative(filepath).then(ressult => console.log(ressult));
+                    fileName = name;
                     return this.file.readAsText(path, name);
                 })
                 .then(buffer => {
                     let parser = new DOMParser();
-                    console.log(buffer);
+                    buffer = buffer.replace(/<\?*xml.*\?>/, '');
                     let xml = parser.parseFromString(buffer, "text/xml");
                     console.log(xml);
                     resolve(xml);
@@ -326,5 +404,202 @@ export class FileSystems {
         }).then(result => {
             return result;
         });
+    }
+
+    async loadXMLNative(pathUrl) {
+        return new Promise((resolve, reject) => {
+            this.httpNavite.get(pathUrl, {}, {}).then((results: any) => {
+                if (results.status == 200) {
+                    let parser = new DOMParser();
+                    results.data = results.data.replace(/<\?*xml.*\?>/, '');
+                    let xml = parser.parseFromString(results.data, "text/xml");
+                    console.log(xml);
+                    resolve(xml);
+                }
+                else resolve(null);
+            }).catch(error => {
+                console.log(error);
+                resolve(null);
+            });
+        })
+            .then(rs => {
+                return rs;
+            });
+    }
+
+    /**
+     * 
+     * @param fileName 
+     * @param fileData 
+     * @param dirName 
+     */
+    writeFile(fileName, fileData, dirName = null) {
+        let directory = this.file.dataDirectory;
+        if (this.platform.is('android')) {
+            directory = this.file.externalCacheDirectory;
+            //nếu tên file lấy từ sdCard.
+            let file = fileName.split(":");
+            if (file.length > 1) {
+                fileName = file[1];
+            }
+        }
+        return new Promise((resolve, reject) => {
+            if (dirName)
+                this.file.createDir(directory, dirName, true).then(dirEntry => {
+                    this.file.writeFile(dirEntry.nativeURL, fileName, fileData, { replace: true }).then((result: FileEntry) => {
+                        console.log(result);
+                        resolve(result.nativeURL);
+                    })
+                }).catch(error => {
+                    console.log(error)
+                })
+            else
+                this.file.writeFile(directory, fileName, fileData, { replace: true }).then(result => {
+                    console.log(result);
+                    resolve(result);
+                })
+        })
+            .then(rs => {
+                return rs;
+            });
+    }
+    checkFileExist(path, file_name) {
+        return new Promise((resolve, reject) => {
+            this.file.checkFile(path + '/', file_name).then(
+                (files) => {
+                    resolve(true)
+                })
+                .catch(
+                    (err) => {
+                        resolve(false)
+                    })
+                .then(rs => { return rs })
+        })
+    }
+    viewFileByDocumentViewer(filePath, onShow?: any, onClose?: any) {
+        let fileType = this.common.getTypeFileByPath(filePath);
+        fileType = this._converttoFileMIMEType(fileType);
+        this.docViewer.viewDocument(filePath, fileType, {
+            email: { enabled: true },
+            search: { enabled: true },
+            print: { enabled: true },
+            bookmarks: { enabled: true },
+        }, onShow, onClose);
+    }
+
+
+    viewHTMLFile(filePath, shareEvent?: any, exportPDFEvent?: any, exportExcelEvent?: any) {
+        var images = {
+            shareImage: 'assets/buttons/share.png',
+            shareImagePressed: 'assets/buttons/share_pressed.png',
+            closeImage: 'assets/buttons/close.png',
+            closeImagePressed: 'assets/buttons/close_pressed.png',
+            menuImage: 'assets/buttons/menuIOS.png',
+            menuImagePressed: 'assets/buttons/menu_pressedIOS.png'
+        };
+        if (this.platform.is("ios")) {
+            images.shareImage = 'assets/buttons/shareIOS.png';
+            images.shareImagePressed = 'assets/buttons/share_pressedIOS.png';
+            images.closeImage = 'assets/buttons/closeIOS.png';
+            images.closeImagePressed = 'assets/buttons/close_pressedIOS.png';
+            images.menuImage = 'assets/buttons/menuIOS.png';
+            images.menuImagePressed = 'assets/buttons/menu_pressedIOS.png';
+        }
+
+        const options = {
+            statusbar: {
+                color: '#ffffffff'
+            },
+            toolbar: {
+                height: 44,
+                color: '#f0f0f0ff'
+            },
+            title: {
+                color: '#003264ff',
+                showPageTitle: true
+            },
+            closeButton: {
+                wwwImage: images.closeImage,
+                wwwImagePressed: images.closeImagePressed,
+                wwwImageDensity: 2,
+                align: 'left',
+                event: 'closePressed'
+            },
+            customButtons: [
+                {
+                    wwwImage: images.shareImage,
+                    wwwImagePressed: images.shareImagePressed,
+                    wwwImageDensity: 2,
+                    align: 'right',
+                    event: 'sharePressed'
+                }
+            ],
+            menu: {
+                wwwImage: images.menuImage,
+                wwwImagePressed: images.menuImagePressed,
+                wwwImageDensity: 2,
+                title: 'Options',
+                cancel: 'Cancel',
+                align: 'right',
+                items: [
+                    {
+                        event: '',
+                        label: 'View File'
+                    },
+                    {
+                        event: 'exportPDF',
+                        label: 'Export PDF'
+                    },
+                    {
+                        event: 'exportExcel',
+                        label: 'ExportExcel'
+                    }
+                ]
+            },
+            backButtonCanClose: true
+        }
+
+        const browser: ThemeableBrowserObject = this.themeableBrowser.create(filePath, '_blank', options);
+        browser.on("sharePressed").subscribe(() => {
+            if (typeof shareEvent == 'function')
+                shareEvent();
+        });
+        browser.on("exportPDF").subscribe(() => {
+            if (typeof exportPDFEvent == 'function')
+                exportPDFEvent();
+        });
+        browser.on("exportExcel").subscribe(() => {
+            if (typeof exportExcelEvent == 'function')
+                exportExcelEvent();
+        });
+    }
+    RemoveFile(filepath) {
+        return new Promise(async (resolve, reject) => {
+            if (this.platform.is('android')) {
+                let filepath_temp = filepath;
+                filepath = await this._convertFilePathAndroid(filepath);
+                if (filepath.includes('sdcard')) {
+                    let fileName_Origin = this.common.getFileNameFromPath(filepath_temp);
+                    fileName_Origin = decodeURIComponent(fileName_Origin);
+                    filepath = this.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                }
+            }
+            this.file
+                .resolveLocalFilesystemUrl(filepath)
+                .then(fileEntry => {
+                    fileEntry.remove(function () {
+                        console.log('Xóa file thành công');
+                        resolve(true)
+                    },
+                        function (error) {
+                            console.log('Có lỗi khi xóa file');
+                            resolve(false)
+                        }
+                    )
+                });
+        })
+            .then(rs => {
+                return rs
+            })
     }
 }

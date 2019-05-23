@@ -11,7 +11,8 @@ import { HTTP } from '@ionic-native/http/ngx';
 export enum TS24PRO_PROGRAM {
     THUE = 'xsl/thue/tkhai/',
     BHXH = 'xsl/ibh/',
-    INVOICE = 'xslts24/'
+    INVOICE = 'xslts24/',
+    INVOICE_VNPT = 'xslvnpt/'
 }
 @Injectable()
 export class Api_Parent_01 extends Api_Master {
@@ -27,25 +28,36 @@ export class Api_Parent_01 extends Api_Master {
      * 
      * @param program_name 
      */
-    getFilePathXSL(program_name: TS24PRO_PROGRAM, file_name) {
-        return this.url + program_name + file_name + '.xsl';
+    async getFilePathXSL(program_name: TS24PRO_PROGRAM, file_name) {
+        return new Promise<any>(async (resolve, reject) => {
+            let pathXSL = "";
+            switch (program_name) {
+                case TS24PRO_PROGRAM.INVOICE_VNPT:
+                    pathXSL = await this.getXSLHDDT(3, file_name);
+                    break;
+                case TS24PRO_PROGRAM.INVOICE:
+                    pathXSL = await this.getXSLHDDT(2, file_name);
+                    break;
+                default:
+                    pathXSL = this.url + program_name + file_name + '.xsl';
+                    break;
+            }
+            resolve(pathXSL);
+        }).then(result => { return result });
     }
 
-    loadXMLNative(pathUrl) {
-        return new Promise((resolve, reject) => {
-            this.httpNavite.get(pathUrl, {}, {}).then((results: any) => {
-                if (results.status == 200) {
-                    let parser = new DOMParser();
-                    let xml = parser.parseFromString(results.data, "text/xml");
-                    console.log(xml);
-                    resolve(xml);
-                }
-                else resolve(null);
-            });
-        })
-            .then(rs => {
-                return rs
-            });
+    /**
+     * Hàm trả về key trong enum TS24PRO_PROGRAM
+     * @param key 
+     */
+    getKeyTS24PRO_PROGRAM(key) {
+        let key_result = null;
+        for (var entry in TS24PRO_PROGRAM) {
+            if (TS24PRO_PROGRAM[entry] == key)
+                key_result = entry;
+        }
+        return key_result;
     }
+
 
 }

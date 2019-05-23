@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Commons } from '../services';
+import { Commons, FileSystems } from '../services';
 import { Api_Parent_01, TS24PRO_PROGRAM } from './api_parent_01';
-import { Api } from './api';
 import { HTTP } from '@ionic-native/http/ngx';
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -12,15 +11,12 @@ export class Api_Parent_02 extends Api_Parent_01 {
     constructor(
         protected http: HttpClient,
         protected Common: Commons,
-        protected httpNavite: HTTP
-        // private api: Api
+        protected httpNavite: HTTP,
+        protected file: FileSystems
     ) {
         super(http, Common, httpNavite);
     }
     //begin-hieu
-    CombineXML(xml, element) {
-
-    }
     /**
      * 
      * @param url path to xml file
@@ -44,6 +40,7 @@ export class Api_Parent_02 extends Api_Parent_01 {
      * @xml file xml
      */
     GetIdXML(type, xml) {
+        let name: any;
         switch (type) {
             case TS24PRO_PROGRAM.THUE:
                 if (xml.getElementsByTagName('maTKhai')[0])
@@ -54,56 +51,78 @@ export class Api_Parent_02 extends Api_Parent_01 {
                     return xml.firstChild.nodeName;
                 else return null;
             case TS24PRO_PROGRAM.INVOICE:
-                if (xml.getElementsByTagName('inv:userDefines')[0]) {
-                    let name: any;
-                    let start: any;
-                    let end: any;
-                    let stringText = xml.getElementsByTagName('inv:userDefines')[0].childNodes[0].nodeValue;
-                    start = stringText.indexOf('<inv:MauIn>');
-                    if (start != -1) {
-                        start = start + 11;
-                        end = stringText.indexOf('</inv:MauIn>');
-                    }
-                    else {
-                        start = stringText.indexOf('<MauIn>') + 5;
-                        end = stringText.indexOf('<MauIn>');
-                    }
-                    name = stringText.substring(start, end)
-                    return name
-                }
+                if (xml.getElementsByTagName('inv:MauIn').length > 0)
+                    return xml.getElementsByTagName('inv:MauIn')[0].childNodes[0].nodeValue;
                 else return null
+            case TS24PRO_PROGRAM.INVOICE_VNPT:
+                if (xml.getElementsByTagName('MauIn').length > 0)
+                    name = xml.getElementsByTagName('MauIn')[0].childNodes[0].nodeValue;
+                else name = null;
+                return name;
+
             default: return null
         }
     }
-
+    /**
+     * kiểm tra loại file xml (thuế, bảo hiểm hoặc hóa đơn/ hóa đơn vnpt)
+     * @param xml 
+     */
     CheckXML(xml) {
-        if (xml.getElementsByTagName('HSoThueDTu')[0])
+        if (xml.getElementsByTagName('HSoThueDTu').length > 0)
             return TS24PRO_PROGRAM.THUE
-        else if (xml.getElementsByTagName('inv:transaction')[0])
+        else if (xml.getElementsByTagName('inv:transaction').length > 0)
             return TS24PRO_PROGRAM.INVOICE
+        else if (xml.getElementsByTagName('Invoice').length > 0)
+            return TS24PRO_PROGRAM.INVOICE_VNPT
         else return TS24PRO_PROGRAM.BHXH
     }
     /**
-     * 
+     * chuyển 2 file xml và xsl thành html fragment
      * @param xml file xml 
      * @param xsl file xsl
      */
-    transformXml(xml, xsl) {
+    ConvertHTML(xml, xsl) {
         var xsltProcessor;
         xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xsl);
         return xsltProcessor.transformToFragment(xml, document);
     }
     /**
-     * 
+     * Xem file html từ 
      * @param element element Node name
      * @param xml file xml
      * @param xsl file xsl
      */
-    ViewHTML(element, xml, xsl) {
-        let content = this.transformXml(xml, xsl);
-        console.log(content);
-        element.nativeElement.appendChild(content);
+    async ViewHTML(path, xmlParam?: any, typeParam?: any) {
+        let xml, type;
+        if (xmlParam && typeParam) {
+            xml = xmlParam;
+            type = typeParam;
+        }
+        let obj = {
+            content: null,
+            type: null
+        }
+        if (!xmlParam && !typeParam) {
+            xml = await this.file.GetDocXMLFromDevice(path);
+            type = this.CheckXML(xml);
+        }
+        obj.type = type;
+        xml = this.DeleteAtribute(type, xml);
+        let id = this.GetIdXML(type, xml);
+        if (id == null)
+            return obj
+        else {
+            let link = await this.getFilePathXSL(type, id);
+            let xsl = await this.file.loadXMLNative(link);
+            if (xsl == null)
+                return obj
+            else {
+                let content = this.ConvertHTML(xml, xsl);
+                obj.content = content;
+                return obj
+            }
+        }
     }
     /**
      * 
@@ -111,13 +130,12 @@ export class Api_Parent_02 extends Api_Parent_01 {
      * @param type type
      */
     DeleteAtribute(type, xml) {
+        var x;
         switch (type) {
             case TS24PRO_PROGRAM.THUE:
                 if (xml.getElementsByTagName('HSoThueDTu')[0].namespaceURI) {
-                    var x, i, attnode, old_att;
                     xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsi");
                     xml.getElementsByTagName('HSoThueDTu')[0].removeAttribute("xmlns:xsd");
-
                     let outer = xml.getElementsByTagName('HSoThueDTu')[0].outerHTML;
                     outer = outer.replace(/xmlns=\"(.*?)\"/g, '');
                     let parser = new DOMParser();
@@ -127,9 +145,23 @@ export class Api_Parent_02 extends Api_Parent_01 {
                 }
                 return xml;
             case TS24PRO_PROGRAM.INVOICE:
-                if (xml.getElementsByTagName("inv:resend")[0]) {
+                if (xml.getElementsByTagName("inv:resend").length > 0) {
                     x = xml.getElementsByTagName("inv:resend")[0];
                     x.parentNode.removeChild(x);
+                    let outer = xml.getElementsByTagName('inv:invoice')[0].outerHTML;
+                    console.log(outer);
+                    outer = outer.replace(/xmlns=\"(.*?)\"/g, "");
+                    do {
+                        outer = outer.replace('<![CDATA[', '');
+                        outer = outer.replace(']]>', '');
+                    }
+                    while (outer.indexOf("![CDATA[") != -1)
+                    console.log(outer.indexOf("![CDATA["), outer.indexOf(']]>'));
+                    //outer = outer.replace(/<!\[CDATA\[(.*)]]>/, "");
+                    let parser = new DOMParser();
+                    xml = parser.parseFromString(outer, "text/xml");
+                    console.log(outer);
+                    console.log(xml);
                 }
                 return xml;
             default:

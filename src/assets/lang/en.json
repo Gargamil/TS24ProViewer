@@ -1,4 +1,10 @@
 {
+    "NOTIFICATION_TITLE": "Notification",
+    "CONFIRM": {
+        "OK": "OK",
+        "CANCEL": "Cancel",
+        "CLOSE": "Close"
+    },
     "HOME_PAGE": {
         "TITLE": "Documents"
     },
@@ -6,9 +12,21 @@
         "TITLE": "Recent"
     },
     "EXPORTPDF_PAGE": {
-        "TITLE": "Export PDF"
+        "TITLE": "Export PDF",
+        "SUB_TITLE": "Files",
+        "SELECT_FILE": "Select file",
+        "SHARE": "Share",
+        "DELETE": "Delete",
+        "DELETE_MGS": "Do you want to remove this file?",
+        "OPEN_FILE_ERROR": "Can not open this file."
     },
     "EXPORTEXCEL_PAGE": {
-        "TITLE": "Export Excel"
+        "TITLE": "Export Excel",
+        "SUB_TITLE": "Files",
+        "SELECT_FILE": "Select file",
+        "SHARE": "Share",
+        "DELETE": "Delete",
+        "DELETE_MGS": "Do you want to remove this file?",
+        "OPEN_FILE_ERROR": "Can not open this file."
     }
 }

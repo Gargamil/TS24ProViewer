@@ -1,7 +1,5 @@
 export const AppSettings = Object.freeze({
-    'URL_API': 'https://www.safecert.com.vn/api.gateway/DANH_MUC/',
-    //'URL_API': 'http://192.168.11.15:8080/DMUC_MYSQL/DANH_MUC/',
-    //'URL_API': 'http://192.168.11.27:8181/DMUC_MYSQL/DANH_MUC/',
+    'URL_API': 'https://www.ts24.com.vn/ts24pro.rs/XSL_MOBILE/',
     'no_image_promotion': 'assets/imgs/no-image-gift.png',
     'icon_discount': 'assets/icon/discount.png',
     'no_image_comp': 'assets/imgs/no-image-restaurant.png',

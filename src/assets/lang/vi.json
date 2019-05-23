@@ -1,4 +1,10 @@
 {
+    "NOTIFICATION_TITLE": "Thông báo",
+    "CONFIRM": {
+        "OK": "Đồng ý",
+        "CANCEL": "Quay lại",
+        "CLOSE": "Đóng"
+    },
     "HOME_PAGE": {
         "TITLE": "Tài liệu "
     },
@@ -6,9 +12,21 @@
         "TITLE": "Xem gần đây"
     },
     "EXPORTPDF_PAGE": {
-        "TITLE": "Export PDF"
+        "TITLE": "Xuất PDF",
+        "SUB_TITLE": "Danh sách tập tin",
+        "SELECT_FILE": "Nhấp để chọn tập tin",
+        "SHARE": "Chia sẻ",
+        "DELETE": "Xóa",
+        "DELETE_MGS": "Bạn có muốn xóa tập tin trong danh sách?",
+        "OPEN_FILE_ERROR": "Không thể mở tập tin."
     },
     "EXPORTEXCEL_PAGE": {
-        "TITLE": "Export Excel"
+        "TITLE": "Xuất Excel",
+        "SUB_TITLE": "Danh sách tập tin",
+        "SELECT_FILE": "Nhấp để chọn tập tin",
+        "SHARE": "Chia sẻ",
+        "DELETE": "Xóa",
+        "DELETE_MGS": "Bạn có muốn xóa tập tin trong danh sách?",
+        "OPEN_FILE_ERROR": "Không thể mở tập tin."
     }
 }

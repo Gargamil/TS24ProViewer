@@ -1,9 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>exportExcel</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{'EXPORTEXCEL_PAGE.TITLE' | translate}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content no-padding>
+  <ion-card (click)="onOpenFile()">
+    <ion-card-content class="open-content">
+      <ion-row>
+        <ion-col size="4"></ion-col>
+        <ion-col size="4">
+          <img class="img" src="assets/icon/icon-documents.png" />
+        </ion-col>
+        <ion-col size="4"></ion-col>
+      </ion-row>
+
+      <ion-label>{{'EXPORTEXCEL_PAGE.SELECT_FILE' | translate}}</ion-label>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-item lines="none">
+    <ion-label>{{'EXPORTEXCEL_PAGE.SUB_TITLE' | translate}}</ion-label>
+  </ion-item>
+  <ion-list *ngIf="excelListFile.length > 0">
+    <ion-item-sliding *ngFor="let item of excelListFile">
+      <ion-item class="file-item" (click)="onOpenConvertFile(item)">
+        <img slot='start' src="../../../assets/icon/excel_icon.svg">
+        <div class=item-info>
+          <div class="file-name text-over">
+            {{item.name}}
+          </div>
+          <div class="des-line text-over">
+            <span> {{item.date}}</span>
+            <span>{{item.size}}</span>
+          </div>
+        </div>
+      </ion-item>
+      <ion-item-options side="end">
+        <!-- <ion-item-option color='light' (click)="onSharePdf(item,$event)">
+          <ion-icon slot="start" class='ion-icon' name="md-share"></ion-icon>
+          {{'EXPORTPDF_PAGE.SHARE' | translate}}
+        </ion-item-option> -->
+        <ion-item-option color='light' (click)="onDeleteFile(item,$event)">
+          <ion-icon slot="start" color="danger" class='ion-icon' name="md-trash"></ion-icon>
+          {{'EXPORTEXCEL_PAGE.DELETE' | translate}}
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 
 </ion-content>
