@@ -14,6 +14,17 @@ export class ExportPDFPage implements OnInit {
 
   pdfListFile: Array<any> = [];
   PdfListModel: any;
+  onWorkingPdfFile: any ; 
+  //  = {
+  //   size: null,
+  //   path: null,
+  //   name: null,
+  //   date: new Date().getDay() + "/" + new Date().getMonth()
+  //     + "/" + new Date().getFullYear(),
+  //   isCreate: true,
+  //   isError: false
+  // };
+  isExport: boolean = false;
 
   constructor(
     public translate: TranslateService,
@@ -43,14 +54,18 @@ export class ExportPDFPage implements OnInit {
    */
   onOpenConvertFile(filEntry) {
     console.log(filEntry);
-    this.fileOpener.open(filEntry.path, this.fileSystems._converttoFileMIMEType("pdf"))
-      .then((any) => {
-        console.log(any);
-      })
-      .catch((err) => {
-        console.log(err);
-        this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
-      });
+    if (!filEntry.isError) {
+      this.fileOpener.open(filEntry.path, this.fileSystems._converttoFileMIMEType("pdf"))
+        .then((any) => {
+          console.log(any);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
+        });
+    } else {
+      this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
+    }
   }
 
   // onSharePdf(item) {
@@ -63,8 +78,8 @@ export class ExportPDFPage implements OnInit {
    */
   onDeletePdf(item) {
     this.common.dialog.confirm(this.translate.instant("EXPORTPDF_PAGE.DELETE_MGS"), () => {
-      PdfListModel.getInstance().removeFile(item);
-      PdfListModel.getInstance().saveLocal();
+      this.deleteFile(item.path);
+      PdfListModel.getInstance().removeFile(item,true);
       this.initData();
     })
   }
@@ -73,21 +88,25 @@ export class ExportPDFPage implements OnInit {
    * Mở hộp thoại chọn file
    */
   onOpenFile() {
-    if (this.platform.is('android')) {
-      // Kiểm tra android permission 
-      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(
-        (result) => {
-          if (result.hasPermission) {
-            this.openFile();
-          }
-          else {
-            this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE]);
-          }
-        },
-        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
-      );
+    if (!this.isExport) {
+      if (this.platform.is('android')) {
+        // Kiểm tra android permission 
+        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(
+          (result) => {
+            if (result.hasPermission) {
+              this.openFile();
+            }
+            else {
+              this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE]);
+            }
+          },
+          err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE)
+        );
+      } else {
+        this.openFile();
+      }
     } else {
-      this.openFile();
+      this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.EXPORT_WAIT"))
     }
   }
 
@@ -96,14 +115,39 @@ export class ExportPDFPage implements OnInit {
    */
   private openFile() {
     if (this.platform.is('android')) {
-      this.fileSystems.openFileAndroid("html").then((uri) => {
-        this.createPdf(uri);
+      this.fileSystems.openFileAndroid(null).then((uri) => {
+        this.checkFileType(uri);
       });
     }
     if (this.platform.is('ios')) {
-      this.fileSystems.openFileIOS("html").then((uri) => {
-        this.createPdf(uri);
+      this.fileSystems.openFileIOS(null).then((uri) => {
+        this.checkFileType(uri);
       });
+    }
+  }
+
+  /**
+   * Kiểm tra định dãng file
+   * @param uri 
+   */
+  private async checkFileType(uri) {
+    console.log(uri);
+    let index = PdfListModel.getInstance().isExistUri(uri);
+    if (index < 0) {
+      let fileType = uri.substring(uri.lastIndexOf(".") + 1);
+      switch (fileType) {
+        case "xml":
+        case "png":
+        case "jpg":
+        case "html":
+          this.createPdf(uri);
+          break;
+        default:
+          this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.EXPORT_NO_SUPPORT"))
+          break;
+      }
+    } else {
+      this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.DUPLICATE_COVERT"))
     }
   }
 
@@ -111,10 +155,18 @@ export class ExportPDFPage implements OnInit {
    * Tạo file pdf tử uri
    * @param uri 
    */
-  private createPdf(uri) {
-    console.log(uri);
-    this.common.loadPanel.show();
+  private async createPdf(uri) {
+    let result: any = await this.fileSystems.GetFileInfo(uri);
+    this.onWorkingPdfFile = result;
+    this.onWorkingPdfFile.orginal_path = result.path;
+    this.onWorkingPdfFile.isCreate = true;
+    this.onWorkingPdfFile.isError = false;
+    this.addFile(this.onWorkingPdfFile);
+
     this.pdfService.createPdfFromHtmlFileUri(uri,
+      (folderpath, filename) => {
+        this.onStart(folderpath, filename);
+      },
       (filEntry) => {
         this.onSuccess(filEntry)
       }, (type, err) => {
@@ -122,17 +174,25 @@ export class ExportPDFPage implements OnInit {
       });
   }
 
+  private onStart(folderpath, filename) {
+    this.isExport = true;
+  }
+
   /**
    * Xử lí khi tạo thành công
    * @param filEntry 
    */
   private async onSuccess(filEntry) {
-    // console.log(filEntry);
+    console.log(filEntry);
+    PdfListModel.getInstance().removeFile(this.onWorkingPdfFile);
     let result: any = await this.fileSystems.GetFileInfo(filEntry.nativeURL);
-    PdfListModel.getInstance().addFile(result);
-    PdfListModel.getInstance().saveLocal();
-    this.initData();
-    this.common.loadPanel.hide();
+    this.onWorkingPdfFile.date = result.date;
+    this.onWorkingPdfFile.path = result.path;
+    this.onWorkingPdfFile.isCreate = false;
+    this.onWorkingPdfFile.isError = false;
+    
+    this.addFile(this.onWorkingPdfFile);
+    this.isExport = false;
   }
 
   /**
@@ -141,6 +201,7 @@ export class ExportPDFPage implements OnInit {
    * @param err 
    */
   private onError(type, err) {
+    console.log(err);
     switch (type) {
       case this.pdfService.FILE_SAVE_ERROR:
         break;
@@ -149,7 +210,28 @@ export class ExportPDFPage implements OnInit {
         console.log(err)
         break;
     }
-    console.log(err);
-    this.common.loadPanel.hide();
+    PdfListModel.getInstance().removeFile(this.onWorkingPdfFile);
+    this.onWorkingPdfFile.isCreate = false;
+    this.onWorkingPdfFile.isError = true;
+    this.addFile(this.onWorkingPdfFile)
+
+    this.isExport = false;
+
+
+  }
+
+  private addFile(fileInfo) {
+    PdfListModel.getInstance().addFile(fileInfo,true);
+    this.initData();
+  }
+
+  private deleteFile(fileUri) {
+    this.fileSystems.RemoveFile(fileUri).then(rs => {
+      if (rs) {
+        this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.ERROR_DELETE_SUCCESS"))
+      } else {
+        this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.ERROR_DELETE_ERROR"))
+      }
+    })
   }
 }

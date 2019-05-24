@@ -18,7 +18,15 @@
         "SHARE": "Chia sẻ",
         "DELETE": "Xóa",
         "DELETE_MGS": "Bạn có muốn xóa tập tin trong danh sách?",
-        "OPEN_FILE_ERROR": "Không thể mở tập tin."
+        "OPEN_FILE_ERROR": "Không thể mở tập tin.",
+        "ERROR_FILE": "Lỗi file",
+        "EXPORT_WAIT": "Đang xuất tập tin vui lòng đợi",
+        "EXPORT_NO_SUPPORT": "Không hổ trợ định dạng tập tin. Vui lòng chọn tập tin (html, xml)",
+        "ERROR_DELETE_SUCCESS": "Đã xóa tập tin trong thư mục",
+        "ERROR_DELETE_ERROR": "Không thể xóa tập tin",
+        "TITLE_DIALOG":"Xác nhận",
+        "DELETE_FILE":"Xóa tập tin trong thư mục",
+        "DUPLICATE_COVERT":"Tập tin đã được xuất. Vui lòng kiểm tra"
     },
     "EXPORTEXCEL_PAGE": {
         "TITLE": "Xuất Excel",

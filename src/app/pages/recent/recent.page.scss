@@ -1,3 +1,9 @@
+.text-over {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .file-item {
     img {
         width: 40px;

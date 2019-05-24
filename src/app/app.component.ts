@@ -4,7 +4,7 @@ import { Platform, Config } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuService } from './services';
+import { MenuService, OpenWithService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,8 @@ export class AppComponent {
     private statusBar: StatusBar,
     private translate: TranslateService,
     private menuService: MenuService,
-    private config: Config
+    private config: Config,
+    private openWith : OpenWithService
   ) {
     this.initializeApp();
     this.initTranslate();
@@ -34,6 +35,7 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.openWith.setupOpenwith(this.handleIntent)
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
@@ -54,5 +56,9 @@ export class AppComponent {
 
   checkActive(page) {
     return page == this.activePage;
+  }
+
+  private handleIntent(intent){
+    console.log(intent)
   }
 }

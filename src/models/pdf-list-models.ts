@@ -32,7 +32,7 @@ export class PdfListModel {
     public get fileList() {
         return this._pdfList;
     }
-    public addFile(item) {
+    public addFile(item, isSave?: boolean) {
         // khi danh sách đã có item
         console.log(this._pdfList);
         if (this._pdfList.length > 0) {
@@ -56,28 +56,39 @@ export class PdfListModel {
         } else {
             this._pdfList.push(item)
         }
-    }
-
-    public removeFile(item) {
-        if (this._pdfList.length > 0) {
-            let index = this._pdfList.findIndex(e => e === item)
-            if (index > -1) {
-                this._pdfList.splice(item);
-            }
+        if (isSave) {
+            this.saveLocal();
         }
     }
 
-    //private isExists(newI, key: string, oldArrary): number {
-    // let index: number = -1;
-    // oldArrary.some(function (old, i) {
-    //     if (old[key] == newI[key]) {
-    //         index = i;
-    //         return true;
-    //     }
-    // });
-    // return index;
-    //let index = oldArrary.findIndex(e => e === newI)
-    // }
+
+    public isExistFile(item): number {
+        let index = -1;
+        if (this._pdfList.length > 0) {
+            index = this._pdfList.findIndex(e => e.orginal_path === item.orginal_path);
+            return index;
+        }
+        return index;
+    }
+
+    public isExistUri(uri: string): number {
+        let index = -1;
+        if (this._pdfList.length > 0) {
+            index = this._pdfList.findIndex(e => e.orginal_path === uri);
+            return index;
+        }
+        return index;
+    }
+
+    public removeFile(item, isSave?: boolean) {
+        let index = this._pdfList.findIndex(e => e.path === item.path)
+        if (index >= 0) {
+            this._pdfList.splice(index, 1);
+        }
+        if (isSave) {
+            this.saveLocal();
+        }
+    }
     saveLocal() {
         localStorage.setItem(PdfListModel.alias_name, JSON.stringify(this));
     }

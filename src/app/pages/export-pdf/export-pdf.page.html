@@ -37,6 +37,10 @@
             <span> {{item.date}}</span>
             <span>{{item.size}}</span>
           </div>
+          <div>
+            <ion-progress-bar *ngIf="item.isCreate == true" type="indeterminate"></ion-progress-bar>
+            <span *ngIf="item.isError == true"> {{'EXPORTPDF_PAGE.ERROR_FILE' | translate}}</span>
+          </div>
         </div>
       </ion-item>
       <ion-item-options side="end">
@@ -44,7 +48,7 @@
           <ion-icon slot="start" class='ion-icon' name="md-share"></ion-icon>
           {{'EXPORTPDF_PAGE.SHARE' | translate}}
         </ion-item-option> -->
-        <ion-item-option color='light' (click)="onDeletePdf(item,$event)">
+        <ion-item-option color='light' (click)="onDeletePdf(item)">
           <ion-icon slot="start" color="danger" class='ion-icon' name="md-trash"></ion-icon>
           {{'EXPORTPDF_PAGE.DELETE' | translate}}
         </ion-item-option>

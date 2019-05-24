@@ -13,7 +13,7 @@
     <!-- <ts24-spinner show='loading'></ts24-spinner> -->
     <ion-list *ngFor="let item of FileList">
         <ion-item-sliding #slidingItem>
-            <ion-item class="file-item" (click)="File_OnClick(item)">
+            <ion-item button class="file-item" (click)="File_OnClick(item)">
                 <img slot='start' src="../../../assets/icon/xml_icon2.svg">
                 <div class=item-info>
                     <div class="file-name text-over">

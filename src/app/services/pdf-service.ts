@@ -21,7 +21,7 @@ export class PdfService {
      * @param fileName Tên file
      * @param pdfhtml Html content
      */
-    createPdfFromHtmlText(success, error, pdfhtml?: any, pdfFileName?: any) {
+    createPdfFromHtmlText(pdfhtml: any, pdfFileName: any, onStart, success, error) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
 
         var options = {
@@ -40,7 +40,7 @@ export class PdfService {
                 let folderpath = this.file.dataDirectory;
                 if (this.platform.is('android'))
                     folderpath = this.file.externalCacheDirectory;
-                this.savebase64AsPDF(folderpath, pdfFileName, base64, contentType, success, error);
+                this.savebase64AsPDF(folderpath, pdfFileName, base64, contentType, onStart, success, error);
             })
             .catch((err) => error(err));
     }
@@ -51,7 +51,7 @@ export class PdfService {
      * @param success 
      * @param error 
      */
-    createPdfFromHtmlFileUri(fileUri, success, error) {
+    createPdfFromHtmlFileUri(fileUri, onStart, success, error) {
         this.file
             .resolveLocalFilesystemUrl(fileUri)
             .then(fileEntry => {
@@ -63,11 +63,11 @@ export class PdfService {
                     this.filePath.resolveNativePath(nativeURL)
                         .then((androidPath) => {
                             androidPath = this.conver.getAndroidSdcardPath(androidPath, fileEntry.fullPath);
-                            this.createPdfFromHtmlFilePath(androidPath, success, error, fileName)
+                            this.createPdfFromHtmlFilePath(androidPath,fileName, onStart, success, error)
                         })
                         .catch(err => error(err));
                 } else {
-                    this.createPdfFromHtmlFilePath(nativeURL, success, error, fileName)
+                    this.createPdfFromHtmlFilePath(nativeURL, fileName, onStart, success, error)
                 }
             })
             .catch((err => error(err)));
@@ -78,7 +78,7 @@ export class PdfService {
      * @param htmlFilePath Đường dẫn file html
      * @param pdfFileName  Têm file pdf muốn tạo
      */
-    createPdfFromHtmlFilePath(htmlFilePath: string, success, error, pdfFileName?: any) {
+    createPdfFromHtmlFilePath(htmlFilePath: string, pdfFileName: any, onStart, success, error, ) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
         var options = {
             documentSize: 'A4',
@@ -104,7 +104,7 @@ export class PdfService {
                 // let folderpath = this.file.dataDirectory;
                 // if (this.platform.is('android'))
                 //     folderpath = this.file.externalCacheDirectory;
-                this.savebase64AsPDF(path, pdfFileName, base64, contentType, success, error);
+                this.savebase64AsPDF(path, pdfFileName, base64, contentType, onStart, success, error);
             })
             .catch((err) => {
                 error(err);
@@ -118,10 +118,10 @@ export class PdfService {
      * @param content content {Base64 String} Important : The content can't contain the following string (data:application/pdf;base64). Only the base64 string is expected.
      * @param contentType 
      */
-    savebase64AsPDF(folderpath, filename, content, contentType, success, error) {
+    savebase64AsPDF(folderpath, filename, content, contentType, onStart, success, error) {
         // Convert the base64 string in a Blob
         var dataBlob = this.b64toBlob(content, contentType);
-
+        onStart(folderpath, filename);
         // console.log("Starting to write the file :3");
         this.writeFile(folderpath, filename, dataBlob, success, error, true);
 

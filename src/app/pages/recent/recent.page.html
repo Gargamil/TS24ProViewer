@@ -10,7 +10,7 @@
             <ion-item-divider *ngIf='group.listItem.length>0'>
                 <ion-label>{{group.key.name}}</ion-label>
             </ion-item-divider>
-            <ion-item class="file-item" *ngFor="let item of group.listItem" (click)="File_OnClick(item)">
+            <ion-item lines="none" class="file-item" *ngFor="let item of group.listItem" (click)="File_OnClick(item)">
                 <img slot='start' src="../../../assets/icon/xml_icon2.svg">
                 <div class=item-info>
                     <div class="file-name text-over">
