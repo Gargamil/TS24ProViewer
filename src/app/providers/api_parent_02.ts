@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Commons, FileSystems } from '../services';
 import { Api_Parent_01, TS24PRO_PROGRAM } from './api_parent_01';
 import { HTTP } from '@ionic-native/http/ngx';
+import moment from "moment-timezone";
 /**
  * Api is a generic REST Api handler. Set your API url first.
  */
@@ -12,7 +13,8 @@ export class Api_Parent_02 extends Api_Parent_01 {
         protected http: HttpClient,
         protected Common: Commons,
         protected httpNavite: HTTP,
-        protected file: FileSystems
+        protected file: FileSystems,
+        //public common: Commons
     ) {
         super(http, Common, httpNavite);
     }
@@ -167,5 +169,116 @@ export class Api_Parent_02 extends Api_Parent_01 {
             default:
                 return xml;
         }
+    }
+    async GetCKS(type, xml) {
+        // return new Promise(async (resolve, reject) => {
+        let id, value, objCKS, xmlEle, NodeCKS, TTCKYS;
+        for (var i = 0; i < xml.getElementsByTagName("Signature").length; i++) {
+            xmlEle = xml.getElementsByTagName("Signature")[i];
+            //lấy id(seller, buyer,,,) và value của CKS
+            id = xmlEle.getAttribute('Id');
+            value = xmlEle.getElementsByTagName("X509Certificate")[0].childNodes[0].nodeValue;
+            //đọc nội dung CKS
+            objCKS = await this.getINFOCKSHDDT(value);
+            switch (type) {
+                case TS24PRO_PROGRAM.INVOICE:
+                    //khởi tạo Node CKS nếu node CKS chưa tồn tại
+                    if (!NodeCKS)
+                        NodeCKS = xml.createElement('CKS');
+                    //Thêm thông tin vào node nếu là seller
+                    if (id == 'seller') {
+                        var CKSNguoiBan = xml.createElement('CKSNguoiBan');
+                        var NodeNguoiBan = this.InsertCKSHDCongTy(xml, CKSNguoiBan, objCKS);
+                        NodeCKS.appendChild(NodeNguoiBan);
+                    }
+                    //Thêm thông tin vào node nếu ko phải seller
+                    else {
+                        var CKSNguoiMua = xml.createElement('CKSNguoiMua');
+                        var NodeNguoiMua = this.InsertCKSHDCongTy(xml, CKSNguoiMua, objCKS);
+                        NodeCKS.appendChild(NodeNguoiMua);
+                    }
+                    xml.getElementsByTagName('inv:invoice')[0].appendChild(NodeCKS);
+                    break;
+                case TS24PRO_PROGRAM.BHXH:
+                    //khởi tạo Node CKS nếu node TTCKYS chưa tồn tại
+                    if (!TTCKYS)
+                        TTCKYS = xml.createElement('TTCKYS');
+                    //Thêm thông tin vào node TTCKY
+                    var TTCKY = xml.createElement('TTCKY');
+                    var NodeTTCKY = this.InsertCKSBHXH(xml, TTCKY, objCKS, 'bhxh');
+                    TTCKYS.appendChild(NodeTTCKY);
+                    xml.getElementsByTagName(xml.firstChild.nodeName)[0].appendChild(TTCKYS);
+                    break;
+                case TS24PRO_PROGRAM.THUE:
+                    //khởi tạo Node CKS nếu node TTCKYS chưa tồn tại
+                    if (!TTCKYS)
+                        TTCKYS = xml.createElement('TTCKYS');
+                    //Thêm thông tin vào node TTCKY
+                    var TTCKY = xml.createElement('TTCKY');
+                    var NodeTTCKY = this.InsertCKSBHXH(xml, TTCKY, objCKS, 'thue');
+                    TTCKYS.appendChild(NodeTTCKY);
+                    xml.getElementsByTagName(xml.firstChild.nodeName)[0].appendChild(TTCKYS);
+                    break;
+                default: break
+            }
+        }
+        console.log(xml);
+        return xml
+        //     resolve(xml)
+        // })
+        //     .then(rs => { rs })
+    }
+    InsertCKSHDCongTy(xml, CKSNguoiBan, objCKS) {
+        var insertNode;
+        for (var property1 in objCKS) {
+            switch (property1) {
+                case 'subjectDN':
+                    insertNode = this.CreateChilNode(xml, 'Subject', objCKS.subjectDN);
+                    CKSNguoiBan.appendChild(insertNode);
+                    break;
+                case 'serialToken':
+                    insertNode = this.CreateChilNode(xml, 'Serial', objCKS.serialToken);
+                    CKSNguoiBan.appendChild(insertNode);
+                    break;
+                default:
+                    break;
+            }
+        }
+        insertNode = this.CreateChilNode(xml, 'Time', '');
+        CKSNguoiBan.appendChild(insertNode);
+        return CKSNguoiBan;
+    }
+    InsertCKSBHXH(xml, TTCKY, objCKS, type?: any) {
+        var insertNode;
+        for (var property1 in objCKS) {
+            switch (property1) {
+                case 'subjectDN':
+                    insertNode = this.CreateChilNode(xml, 'SI', objCKS.subjectDN);
+                    TTCKY.appendChild(insertNode);
+                    break;
+                case 'serialToken':
+                    insertNode = this.CreateChilNode(xml, 'SN', objCKS.serialToken);
+                    TTCKY.appendChild(insertNode);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (type == 'bhxh') {
+            //lấy time trong SigningTime và công thêm GMT+7
+            let time = xml.getElementsByTagName('SigningTime')[0].childNodes[0].nodeValue;
+            // console.log(time);
+            let time2 = moment(time).tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
+            // console.log(time2);
+            insertNode = this.CreateChilNode(xml, 'ST', time2);
+        }
+        TTCKY.appendChild(insertNode);
+        return TTCKY
+    }
+    CreateChilNode(xml, NodeName, txt) {
+        var parrentNode = xml.createElement(NodeName);
+        var textNode = xml.createTextNode(txt);
+        parrentNode.appendChild(textNode);
+        return parrentNode
     }
 }

@@ -92,5 +92,81 @@
 			<ct43>0</ct43>
 		</CTieuTKhaiChinh>
 		<PLuc />
+              <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" Id="sigid">
+         <SignedInfo>
+            <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+            <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+            <Reference URI="">
+               <Transforms>
+                  <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+               </Transforms>
+               <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+               <DigestValue>RdGNfYCqe0AlhwjF+QqIHUtvGSY=</DigestValue>
+            </Reference>
+         </SignedInfo>
+         <SignatureValue>HJugUgqVquCjGpau1kqVyVrq6Yp1Tq2Z+J+QdK3PNIPanRQrn7BDo0KvmJya5soRKciSEUUuemZpcqDcs/98VzSR33G4TNEA6RJHUrSEpU2SIxHTmsrLwLa/aJ6fjFyKel6ZTnA//ZKayKzztczAOsjRjmp1YQ+5xrrqyEm6bRI=</SignatureValue>
+         <KeyInfo>
+            <KeyValue>
+               <RSAKeyValue>
+                  <Modulus>1u9dreZ51NwtAOH8XbYqWSFawjDXbz6MlMEOC5bLhQvKO5Vd0XLQEcy6RoG+X6femy5Dqc00JnC7wKUrCGUO/K4dlhPfjakrDqVO6JYmyTIx3LD+R9k+A6/d91dPPbYE4U4QQQbiw77UBNNUoqhm5l8zvNXLx98hpKAJ0pUAGws=</Modulus>
+                  <Exponent>AQAB</Exponent>
+               </RSAKeyValue>
+            </KeyValue>
+            <X509Data>
+               <X509SubjectName>C=VN, L="XX1 Đồng Nai, Phường 15, Quận 10, Thành phố Hồ Chí Minh", O=MST:0305579977, CN=TRƯỜNG THPT NGUYỄN DU, E=trietvan84@gmail.com</X509SubjectName>
+               <X509Certificate>MIIE0DCCA7igAwIBAgIQVAcpIWQXT7ZCjBYVqh3MNTANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJWTjEkMCIGA1UEChMbU0FGRS1DQSBKb2ludCBTdG9jayBDb21wYW55MRAwDgYDVQQLEwdTQUZFLUNBMRAwDgYDVQQDEwdTQUZFLUNBMB4XDTE3MDkyNzAwMjgwMFoXDTE5MDQwNzE3MDAwMFowgcAxIzAhBgkqhkiG9w0BCQEWFHRyaWV0dmFuODRAZ21haWwuY29tMSMwIQYDVQQDDBpUUsav4bucTkcgVEhQVCBOR1VZ4buETiBEVTEXMBUGA1UECgwOTVNUOjAzMDU1Nzk5NzcxTjBMBgNVBAcMRVhYMSDEkOG7k25nIE5haSwgUGjGsOG7nW5nIDE1LCBRdeG6rW4gMTAsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaDELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANbvXa3medTcLQDh/F22KlkhWsIw128+jJTBDguWy4ULyjuVXdFy0BHMukaBvl+n3psuQ6nNNCZwu8ClKwhlDvyuHZYT342pKw6lTuiWJskyMdyw/kfZPgOv3fdXTz22BOFOEEEG4sO+1ATTVKKoZuZfM7zVy8ffIaSgCdKVABsLAgMBAAGjggGwMIIBrDCBtQYIKwYBBQUHAQEEgagwgaUwNwYIKwYBBQUHMAKGK2h0dHA6Ly9wdWJsaWMucm9vdGNhLmdvdi52bi9jcnQvbWljbnJjYS5jcnQwQAYIKwYBBQUHMAKGNGh0dHA6Ly93d3cuc2FmZWNlcnQuY29tLnZuL3d3dy9jZXJ0L1NBRkUtQ0EtMjAxNy5jZXIwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwMS5zYWZlY2VydC5jb20udm4wHQYDVR0OBBYEFJ25vSNmhGQr0mA9KhjUwkGlSeWDMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU9A0UeMBITNk62psaTV+Odws2i+QwRwYDVR0gBEAwPjA8BghghUADAQIDBDAwMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnNhZmVjZXJ0LmNvbS52bi93d3cvcnBhMCwGA1UdHwQlMCMwIaAfoB2GG2h0dHA6Ly9jcmwxLnNhZmVjZXJ0LmNvbS52bjAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4IBAQCReHtM6OOwuU+HsqIT+A2089gb0rFkYA9+009i3qtrctS5EsidnSTMyx+4tKkD94NDG+F4tPWVKa5qJOooyOACKrKj74eNaydivJDBXwoDJMFF2SpimBGVezVj5oNNgNYS13tKz6AQ73Q09jC5bDhwLiO0KIhAz2nz/ou0JTSBZ9WnPWvYobODM2qrxloJaLzJCdsHR6i1A6Pt7Ma20a9B8E6v0gAPDRbE4HqD7IfzzNd4GieCe2dJmHONttHbXlrQzWJog6YRzR/qIRXghgbsC52wSRc1Fq3za344MdlOrc+IZ+2KqwsXkh0qB+2/kpOYhIva9WF2WH9Ro6UOLDm5</X509Certificate>
+            </X509Data>
+         </KeyInfo>
+         <Object>
+            <SignatureProperties xmlns="" Id="proid">
+               <SignatureProperty Target="#sigid">
+                  <SigningTime xmlns="http://example.org/#signatureProperties">2018-12-19T08:26:17Z</SigningTime>
+               </SignatureProperty>
+            </SignatureProperties>
+         </Object>
+      </Signature>
+      <Signature Id="seller" 
+                xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <SignedInfo>
+                    <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+                    <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+                    <Reference URI="">
+                        <Transforms>
+                            <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+                        </Transforms>
+                        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+                        <DigestValue>MSsUgjbb2HkReGURcAtkSDh+85s=</DigestValue>
+                    </Reference>
+                </SignedInfo>
+                <SignatureValue>XNTa2runv88Q8h2A0BNj/cNKauFOfvXri2C4qZ8rjwzKg0V6qmYVYI5Q+qXOH23p3xtD5twLZx0n1nXXpouAQ5W0w0HNAIzMD36QBKUPLmsVVZ7UMZrg+HOmYLkHsyextU0MJwK1xqtvpa7rEDK7Y2y/7In+VzVtY/Ew7C4lhC0=</SignatureValue>
+                <KeyInfo>
+                    <X509Data>
+                        <X509SubjectName>C=VN, L="159 Trần Trọng Cung, Khu dân cư Nam Long, Phường Tân Thuận Đông, Quận 7, Thành Phố Hồ Chí Minh, Việt Nam", O=MST:0304859192, CN=CÔNG TY CỔ PHẦN HÀNG HẢI VÀ PHÁT TRIỂN PHI MÃ, E=hr@seagullcorp.com.vn</X509SubjectName>
+                        <X509Certificate>MIIFMDCCBBigAwIBAgIQVAej3ob6syc31/VxpjPrtzANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJWTjEkMCIGA1UEChMbU0FGRS1DQSBKb2ludCBTdG9jayBDb21wYW55MRAwDgYDVQQLEwdTQUZFLUNBMRAwDgYDVQQDEwdTQUZFLUNBMB4XDTE3MDkyOTA1MzAwMFoXDTE5MDgxMzE3MDAwMFowggEfMSQwIgYJKoZIhvcNAQkBFhVockBzZWFndWxsY29ycC5jb20udm4xQzBBBgNVBAMMOkPDlE5HIFRZIEPhu5QgUEjhuqZOIEjDgE5HIEjhuqJJIFbDgCBQSMOBVCBUUknhu4JOIFBISSBNw4MxFzAVBgNVBAoMDk1TVDowMzA0ODU5MTkyMYGLMIGIBgNVBAcMgYAxNTkgVHLhuqduIFRy4buNbmcgQ3VuZywgS2h1IGTDom4gY8awIE5hbSBMb25nLCBQaMaw4budbmcgVMOibiBUaHXhuq1uIMSQw7RuZywgUXXhuq1uIDcsIFRow6BuaCBQaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbTELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAL5+vdB7lgC6FNqw9lfVJeyyi1etQ3Uj//0cAmxeBpdIOeA3Tt3/bQqTQayRMZiuaRVljA2tvHN8rPld3YqRNJtJ6+rIVls13MqAC65Ie9KN+DnsH4IWqyGhf+DCW7CqDPLfWMReT3Yomswel3Q+3Bi6yXrKV1xQtriS/80ZSLorAgMBAAGjggGwMIIBrDCBtQYIKwYBBQUHAQEEgagwgaUwNwYIKwYBBQUHMAKGK2h0dHA6Ly9wdWJsaWMucm9vdGNhLmdvdi52bi9jcnQvbWljbnJjYS5jcnQwQAYIKwYBBQUHMAKGNGh0dHA6Ly93d3cuc2FmZWNlcnQuY29tLnZuL3d3dy9jZXJ0L1NBRkUtQ0EtMjAxNy5jZXIwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwMS5zYWZlY2VydC5jb20udm4wHQYDVR0OBBYEFCeo3MJyL8v3XJ+WoD8Xj8/NcqQ/MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU9A0UeMBITNk62psaTV+Odws2i+QwRwYDVR0gBEAwPjA8BghghUADAQIDBDAwMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnNhZmVjZXJ0LmNvbS52bi93d3cvcnBhMCwGA1UdHwQlMCMwIaAfoB2GG2h0dHA6Ly9jcmwxLnNhZmVjZXJ0LmNvbS52bjAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4IBAQB+55DwwGVZUBIVVEYOsvXo1c1tKMMUbwMQRBipjEOTTvcwwf/RPwDn2fGRT+a6nh3ns4l8UpKBUS2sDaz99/7WrcYMl+yIqy4TCL6aLk+ERN26pbuc5vSCghETtJd11KKfBj1w38yFWIPi/h3qQenHNRdYeo96faHhJ1E5v4xVxN+HiOT0sQyWsaylkk9ROgfPp2mC4ldjWwE3Tgp8oC1scLcxCetWsaOn/B/4Yf7iw90VnBrFDyiWrfdY+8x0uEoXvzbQFt+xp640Sa1HmTxcKsv/23hVFoEdwbqgPpNJ2qS8idliShpkTCE76g04ib+/z1cjoMKmmpfguBUPudNp</X509Certificate>
+                    </X509Data>
+                </KeyInfo>
+            </Signature>
+
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#" Id="buyer">
+   <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+      <Reference URI="">
+         <Transforms>
+            <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+         </Transforms>
+         <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+         <DigestValue>zRVDX6/NjvFI4jH6h1RwBcK2dCk=</DigestValue>
+      </Reference>
+   </SignedInfo>
+   <SignatureValue>A1C95ICeQGWU1lu8ZL11rxvw+2Y55ckqYux20pgAgTYF5EmIUeIk/cGp4HvA8dANffm19yP1wLibrzPBuulChTVxLvEfs0gl2K/HJVWmQ0AKNH5RpAiBQ5zUnXqnxP5/EdK0m3uTmaJLLYpj666Euo0RaS88CW1veQEI1eVtB9s=</SignatureValue>
+   <KeyInfo>
+      <X509Data>
+         <X509SubjectName>C=VN, L="241 Lý Thường Kiệt, Phường 15, Quận 11, Thành phố Hồ Chí Minh", O=MST:0301473828, CN=CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI MINH HƯNG LONG, E=thuvan@paragon.com.vn</X509SubjectName>
+         <X509Certificate>MIIE/TCCA+WgAwIBAgIQVAcXoEoxJysz9NQpUjyXJTANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJWTjEkMCIGA1UEChMbU0FGRS1DQSBKb2ludCBTdG9jayBDb21wYW55MRAwDgYDVQQLEwdTQUZFLUNBMRAwDgYDVQQDEwdTQUZFLUNBMB4XDTE4MDEwMjAzMDQwMFoXDTIxMDQwMjAzMzYwMFowge0xJDAiBgkqhkiG9w0BCQEWFXRodXZhbkBwYXJhZ29uLmNvbS52bjFGMEQGA1UEAww9Q8OUTkcgVFkgVE5ISCBT4bqiTiBYVeG6pFQgVsOAIFRIxq/GoE5HIE3huqBJIE1JTkggSMavTkcgTE9ORzEXMBUGA1UECgwOTVNUOjAzMDE0NzM4MjgxVzBVBgNVBAcMTjI0MSBMw70gVGjGsOG7nW5nIEtp4buHdCwgUGjGsOG7nW5nIDE1LCBRdeG6rW4gMTEsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaDELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJVxu+NhLOH7ubgduoGbSGHHBrCJXb/v9cGgGNTbEX09Mto8zXKbrRP1yKxg1eU8PVUj3OwlQxjkU3qzZb1eVckV6RKJqdjbRKjB4MQz14uCGtBiYkht7Q39TT09jlayNzGn2Ibz+ZFt4zni7s0fKkp65mspjggMhDMzG2AzMFw1AgMBAAGjggGwMIIBrDCBtQYIKwYBBQUHAQEEgagwgaUwNwYIKwYBBQUHMAKGK2h0dHA6Ly9wdWJsaWMucm9vdGNhLmdvdi52bi9jcnQvbWljbnJjYS5jcnQwQAYIKwYBBQUHMAKGNGh0dHA6Ly93d3cuc2FmZWNlcnQuY29tLnZuL3d3dy9jZXJ0L1NBRkUtQ0EtMjAxNy5jZXIwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwMS5zYWZlY2VydC5jb20udm4wHQYDVR0OBBYEFAwoNUQQAn4VT08T+s1rxh5gEalNMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU9A0UeMBITNk62psaTV+Odws2i+QwRwYDVR0gBEAwPjA8BghghUADAQIDBDAwMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnNhZmVjZXJ0LmNvbS52bi93d3cvcnBhMCwGA1UdHwQlMCMwIaAfoB2GG2h0dHA6Ly9jcmwxLnNhZmVjZXJ0LmNvbS52bjAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4IBAQBXJRToDjs1zg7TgGzK37+I1A4Q8pDwiiyZ2riPm7ZMzYOCKI+RhB7CBiC+JJkQ0Wo+3nG7urtae3KcF2QjnuzHI41bmwaEFinBDnCmXTJzvPlvfiQfds5HBcn/MLysUBljvKTRDvrzTpo3xyakd1oFZxfZAJaUOBKDlAOazrTvezV/+ykQP1oh806eCsRUGwl9CbxeMMLZi6e6BqNcf6YCsHdapLgiACz1EXYlIEt7oqLLVxRWONpcc2//DCOY3XmeJjY8GfBZ6fxWHNj6fzSMW9Kif3fxvuZPJJ0kLgANap8+WhyhbZ6BUgpgG7jwK6VN1xzPlyrfptsALs8q/WJD</X509Certificate>
+      </X509Data>
+   </KeyInfo>
+</Signature>
 	</HSoKhaiThue>
+
 </HSoThueDTu>

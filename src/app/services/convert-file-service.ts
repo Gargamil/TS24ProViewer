@@ -106,10 +106,14 @@ export class ConvertFileService {
             fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
             fileNameWithOutExt = fileName.substring(0, fileName.lastIndexOf("."));
         }
-        this.file.readAsText(path, fileName)
-            .then((text) => {
+        //Đọc file thành array buffer
+        this.file.readAsArrayBuffer(path, fileName)
+            .then((buffer) => {
                 // console.log(text)
-                this.writeFile(path, (fileNameWithOutExt + ".xls"), "application/vnd.ms-excel", text, success, error, true)
+                let content = new Blob([buffer], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;"
+                });
+                this.writeFile(path, (fileNameWithOutExt + ".xlsx"), "application/vnd.ms-excel", content, success, error, true)
             })
             .catch((err => error(this.FILE_SAVE_ERROR, err)));
     }

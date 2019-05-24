@@ -12,6 +12,7 @@ import { ResolveEnd } from '@angular/router';
 import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { ThemeableBrowser, ThemeableBrowserOptions, ThemeableBrowserObject } from '@ionic-native/themeable-browser/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
@@ -25,7 +26,8 @@ export class FileSystems {
         private filePicker: IOSFilePicker,
         private docViewer: DocumentViewer,
         private themeableBrowser: ThemeableBrowser,
-        private convertFileSerVice: ConvertFileService
+        private convertFileSerVice: ConvertFileService,
+        private browser: InAppBrowser
     ) { }
     fileTransfer: FileTransferObject = this.transfer.create();
 
@@ -512,7 +514,7 @@ export class FileSystems {
             },
             toolbar: {
                 height: 44,
-                color: '#f0f0f0ff'
+                color: '#A0E1F6'
             },
             title: {
                 color: '#003264ff',
@@ -556,10 +558,20 @@ export class FileSystems {
                     }
                 ]
             },
-            backButtonCanClose: true
+            // backButtonCanClose: true
         }
 
         const browser: ThemeableBrowserObject = this.themeableBrowser.create(filePath, '_blank', options);
+        // const browser = this.browser.create(filePath, '_blank', {
+        //     location: this.platform.is('android') ? 'yes' : 'no',
+        //     toolbar: 'yes',
+        //     closebuttoncaption: 'Quay lại',
+        //     closebuttoncolor: '#ffffff',
+        //     enableViewportScale: 'no',
+        //     zoom: 'no',
+        //     hideurlbar: 'yes',
+        //     toolbarcolor: '#f2be09'
+        // });
         browser.on("sharePressed").subscribe(() => {
             if (typeof shareEvent == 'function')
                 shareEvent();

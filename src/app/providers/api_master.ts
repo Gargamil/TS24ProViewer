@@ -38,6 +38,22 @@ import { AppSettings, Commons } from '../services';
 			<SN>5407292164174FB6428C1615AA1DCC35</SN>
 			<ST>2018-12-19 15:26:17</ST>
 		</TTCKY>
+    </TTCKYS>
+    
+ * III.Đối với Tax
+  Tìm list node GetElementsByTagName("Signature") 
+  * => tìm node X509Certificate và đọc value 
+ * => truyền value vào hàm getINFOCKSHDDT => lấy ra object chữ ký số
+ * => append line trong xml 
+ * <TTCKYS>
+		<TTCKY>
+			<SI>CÔNG TY TNHH CÔNG NGHỆ THỰC PHẨM BẮC ÂU</SI>
+			<SN>09B8EABC466D873EC1E8BA0AE903F84F</SN>
+		</TTCKY>
+		<TTCKY>
+			<SI>CÔNG TY CỔ PHẦN TS24</SI>
+			<SN>5407E9BADE9D06DB9E6775F7CBA98859</SN>
+		</TTCKY>...
 	</TTCKYS>
  */
 @Injectable()

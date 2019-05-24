@@ -1,0 +1,21 @@
+.file-item {
+    img {
+        width: 40px;
+        height: 60px;
+        margin-right: 21px;
+    }
+
+    .item-info {
+        width: 100%;
+
+        .file-name {
+            font-size: 16px;
+        }
+
+        .des-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+    }
+}
