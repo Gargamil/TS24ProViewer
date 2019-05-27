@@ -5,6 +5,7 @@ import { FileSystems, Commons } from 'src/app/services';
 import { File } from '@ionic-native/file/ngx';
 import { FileListModel } from 'src/models/filelist-models';
 import { RecentModel } from 'src/models/recent-model';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-home',
     templateUrl: 'home.page.html',
@@ -28,7 +29,8 @@ export class HomePage {
         public platform: Platform,
         public common: Commons,
         public alertCtrl: AlertController,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
+        public translate: TranslateService
     ) {
         //this.CombineXML();
         this.FileList = FileListModel.getInstance().fileList;
@@ -74,16 +76,20 @@ export class HomePage {
             filepath = await this.fileSystems.openFileAndroid('xml');
         if (this.platform.is('ios'))
             filepath = await this.fileSystems.openFileIOS('xml');
-        this.common.loadPanel.show('Đang tải file');
-        console.log('filepath', filepath);
-        let result: any = await this.fileSystems.GetFileInfo(filepath);
-        let FileModel = FileListModel.getInstance();
-        FileModel.addFile(result);
-        FileModel.saveLocal();
-        console.log(FileModel.fileList);
-        this.FileList = FileModel.fileList;
-        this.cd.detectChanges();
-        this.common.loadPanel.hide();
+        this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
+        if (!filepath) {
+            return null
+        }
+        else {
+            let result: any = await this.fileSystems.GetFileInfo(filepath);
+            let FileModel = FileListModel.getInstance();
+            FileModel.addFile(result);
+            FileModel.saveLocal();
+            console.log(FileModel.fileList);
+            this.FileList = FileModel.fileList;
+            this.cd.detectChanges();
+            this.common.loadPanel.hide();
+        }
     }
     async OpenSheet() {
         const actionSheet = await this.actionSheetController.create({
@@ -113,8 +119,8 @@ export class HomePage {
     async ShowAlert(file, slidingItem) {
         // let slidingItem: IonItemSliding;
         let prompt = await this.alertCtrl.create({
-            header: 'Xác nhận',
-            message: 'bạn có muốn xóa file này không ??? ',
+            header: this.translate.instant("HOME_PAGE.CONFIRM"),
+            message: this.translate.instant("HOME_PAGE.DELETE_NOTIFICATION"),
             inputs: [
                 {
                     type: 'checkbox',
@@ -124,20 +130,20 @@ export class HomePage {
                 }],
             buttons: [
                 {
-                    text: "Hủy",
+                    text: this.translate.instant("HOME_PAGE.NO"),
                     handler: data => {
                         console.log("cancel clicked");
                         slidingItem.close();
                     }
                 },
                 {
-                    text: "Xóa",
+                    text: this.translate.instant("HOME_PAGE.YES"),
                     handler: async data => {
                         console.log("Xóa clicked");
                         if (data.length > 0) {
                             let rs: any = await this.fileSystems.RemoveFile(file.path);
                             if (rs == false)
-                                this.common.toast.show('Có lỗi khi xóa file gốc, vui lòng thử lại sau!!!')
+                                this.common.toast.show(this.translate.instant("HOME_PAGE.ERR_DEL_FILE"))
                             console.log('ket qua xóa file', rs);
                         }
                         let FileModel = FileListModel.getInstance();
@@ -152,19 +158,21 @@ export class HomePage {
     }
     async AlertViewXML(path) {
         let prompt = await this.alertCtrl.create({
-            header: 'Thông báo',
-            message: 'TS24ProViewer không hỗ trợ xem file này, bạn có muốn xem tiếp không ? ',
+            header: this.translate.instant('HOME_PAGE.NOTIFICATION'),
+            message: this.translate.instant('HOME_PAGE.NOTI_NOTSUPPORT'),
             buttons: [
                 {
-                    text: "Không",
+                    text: this.translate.instant("HOME_PAGE.NO"),
                     handler: data => {
                         console.log("cancel clicked");
                     }
                 },
                 {
-                    text: "Có",
+                    text: this.translate.instant("HOME_PAGE.YES"),
                     handler: data => {
-                        this.fileSystems.viewHTMLFile(path);
+                        this.fileSystems.viewHTMLFile(path, () => {
+                            this.api.shareFileHTML(path)
+                        });
                     }
                 }]
         });
@@ -173,7 +181,7 @@ export class HomePage {
     async ViewHTML(item) {
         let path = item.path;
         let name = item.name;
-        this.common.loadPanel.show('Đang tải file, vui lòng chờ...');
+        this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
         //đổi đuôi tên file để lưu vào bộ nhớ máy
         let nameHTML = name.substring(0, name.length - 3) + 'html';
         //đọc file xml từ path 
@@ -184,7 +192,7 @@ export class HomePage {
         if (this.platform.is('android'))
             directory = this.file.externalCacheDirectory;
         let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
-        this.common.loadPanel.show('Đã tải xong, đang xử lý...');
+        this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
         // console.log(directory + dirName);
         //kiểm tra file đã tồn tại trong hệ thống hay chưa, nếu có thì lấy file từ hệ thống để xem...
         let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)
@@ -195,11 +203,12 @@ export class HomePage {
             this.fileSystems.viewHTMLFile(uri, () => {
                 this.api.shareFileHTML(uri)
             });
+            item.uri = directory + dirName + '/' + nameHTML;
         }
         else {
             //nếu chưa tồn tại, đọc file xml để combine với xsl từ server
             // lấy chữ kí số
-            this.common.loadPanel.show('Đang xử lý chữ kí số...');
+            this.common.loadPanel.show(this.translate.instant('HOME_PAGE.CKS'));
             let xml2: any = await this.api.GetCKS(type, xml);
             console.log(xml2);
             let objCallback = await this.api.ViewHTML(path, xml2, type);
@@ -210,16 +219,13 @@ export class HomePage {
             }
             else {
                 //lưu file html vừa combine vào bộ nhớ máy
-                let docFrag = document.createDocumentFragment();
-                docFrag.appendChild(objCallback.content);
-                let doc = document.createElement("div");
-                doc.appendChild(docFrag.cloneNode(true));
+                let doc = this.GetHTML(objCallback.content);
                 let uri = await this.fileSystems.writeFile(nameHTML, doc.innerHTML, this.api.getKeyTS24PRO_PROGRAM(type));
-                // this.html.nativeElement.appendChild(content);
                 this.common.loadPanel.hide();
                 this.fileSystems.viewHTMLFile(uri, () => {
                     this.api.shareFileHTML(uri)
                 });
+                item.uri = uri;
             }
         }
         item.type = type;
@@ -230,5 +236,54 @@ export class HomePage {
 
         // this.mytime = 0;
     }
-
+    async ShareFile_OnClick(item, e: Event, slidingItem: IonItemSliding) {
+        e.stopPropagation();
+        console.log(e);
+        let path = item.path;
+        let name = item.name;
+        this.common.loadPanel.show();
+        //đổi đuôi tên file để lưu vào bộ nhớ máy
+        let nameHTML = name.substring(0, name.length - 3) + 'html';
+        //đọc file xml từ path 
+        let xml = await this.fileSystems.GetDocXMLFromDevice(path);
+        //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
+        let type = this.api.CheckXML(xml);
+        let directory = this.file.dataDirectory;
+        if (this.platform.is('android'))
+            directory = this.file.externalCacheDirectory;
+        let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
+        this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
+        let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)
+        if (fileExist) {
+            //console.log(directory + dirName + '/' + nameHTML);
+            let uri = directory + dirName + '/' + nameHTML;
+            this.common.loadPanel.hide();
+            this.api.shareFileHTML(uri)
+        }
+        else {
+            let xml2: any = await this.api.GetCKS(type, xml);
+            let objCallback = await this.api.ViewHTML(path, xml2, type);
+            if (objCallback.content == null) {
+                //combine ko được
+                this.api.shareFileHTML(path)
+                this.common.loadPanel.hide();
+            }
+            else {
+                //lưu file html vừa combine vào bộ nhớ máy
+                let doc = this.GetHTML(objCallback.content);
+                let uri = await this.fileSystems.writeFile(nameHTML, doc.innerHTML, this.api.getKeyTS24PRO_PROGRAM(type));
+                // this.html.nativeElement.appendChild(content);
+                this.common.loadPanel.hide();
+                this.api.shareFileHTML(uri)
+            };
+        }
+        slidingItem.close();
+    }
+    GetHTML(content) {
+        let docFrag = document.createDocumentFragment();
+        docFrag.appendChild(content);
+        let doc = document.createElement("div");
+        doc.appendChild(docFrag.cloneNode(true));
+        return doc
+    }
 }

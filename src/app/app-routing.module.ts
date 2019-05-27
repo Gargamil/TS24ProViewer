@@ -17,7 +17,8 @@ const routes: Routes = [
     },
     { path: 'export-pdf', loadChildren: './pages/export-pdf/export-pdf.module#ExportPDFPageModule' },
     { path: 'export-excel', loadChildren: './pages/export-excel/export-excel.module#ExportExcelPageModule' },
-    { path: 'action-sheet', loadChildren: './pages/home/action-sheet/action-sheet.module#ActionSheetPageModule' }
+    { path: 'action-sheet', loadChildren: './pages/home/action-sheet/action-sheet.module#ActionSheetPageModule' },
+  { path: 'custome-alert-dialog', loadChildren: './pages/export-pdf/custome-alert-dialog/custome-alert-dialog.module#CustomeAlertDialogPageModule' }
 ];
 
 @NgModule({

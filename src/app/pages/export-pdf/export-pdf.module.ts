@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ExportPDFPage } from './export-pdf.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from 'src/app/shared.module';
+import { CustomeAlertDialogPage } from './custome-alert-dialog/custome-alert-dialog.page';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     TranslateModule.forChild(),
     SharedModule,
   ],
-  declarations: [ExportPDFPage]
+  declarations: [ExportPDFPage],
+  entryComponents: [CustomeAlertDialogPage]
 })
 export class ExportPDFPageModule { }

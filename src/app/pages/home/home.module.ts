@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
 import { ActionSheetPage } from './action-sheet/action-sheet.page';
 import { SharedModule } from 'src/app/shared.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     imports: [
@@ -14,6 +15,7 @@ import { SharedModule } from 'src/app/shared.module';
         FormsModule,
         SharedModule,
         IonicModule,
+        TranslateModule.forChild(),
         RouterModule.forChild([
             {
                 path: '',

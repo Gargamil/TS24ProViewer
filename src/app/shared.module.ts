@@ -6,12 +6,15 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'src/pipes/pipes.module';
 import { ActionSheetPage } from './pages/home/action-sheet/action-sheet.page';
+import { CustomeAlertDialogPage } from './pages/export-pdf/custome-alert-dialog/custome-alert-dialog.page';
+
 export const shared_modal = [
 ];
 @NgModule({
     declarations: [
         shared_modal,
-        ActionSheetPage
+        ActionSheetPage,
+        CustomeAlertDialogPage
     ],
     imports: [IonicModule,
         CommonModule,

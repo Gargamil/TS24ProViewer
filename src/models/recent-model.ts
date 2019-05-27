@@ -76,12 +76,14 @@ export class RecentModel {
     }
 
     public removeFile(item) {
-        if (this._fileList.length > 0) {
-            let index = this._fileList.findIndex(e => e.path === item.path)
-            if (index > -1) {
-                this._fileList.splice(index, 1);
+        this._fileList.forEach(element => {
+            if (element.key.type === item.type) {
+                let index = element.listItem.findIndex(e => e.path === item.path)
+                if (index > -1) {
+                    element.listItem.splice(index, 1);
+                }
             }
-        }
+        });
     }
 
     //private isExists(newI, key: string, oldArrary): number {

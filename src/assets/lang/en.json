@@ -3,7 +3,9 @@
     "CONFIRM": {
         "OK": "OK",
         "CANCEL": "Cancel",
-        "CLOSE": "Close"
+        "CLOSE": "Close",
+        "NO":"No",
+        "YES":"Yes"
     },
     "HOME_PAGE": {
         "TITLE": "Documents"
@@ -24,9 +26,9 @@
         "EXPORT_NO_SUPPORT": "No Support",
         "ERROR_DELETE_SUCCESS": "Success",
         "ERROR_DELETE_ERROR": "Error",
-        "TITLE_DIALOG":"Confirm",
-        "DELETE_FILE":"Delete file.",
-        "DUPLICATE_COVERT":"Duplicate Convert"
+        "TITLE_DIALOG": "Confirm",
+        "DELETE_FILE": "Delete file.",
+        "DUPLICATE_COVERT": "Duplicate Convert"
     },
     "EXPORTEXCEL_PAGE": {
         "TITLE": "Export Excel",
@@ -35,6 +37,14 @@
         "SHARE": "Share",
         "DELETE": "Delete",
         "DELETE_MGS": "Do you want to remove this file?",
-        "OPEN_FILE_ERROR": "Can not open this file."
+        "OPEN_FILE_ERROR": "Can not open this file.",
+        "ERROR_FILE": "File Error",
+        "EXPORT_WAIT": "Please Wait",
+        "EXPORT_NO_SUPPORT": "No Support",
+        "ERROR_DELETE_SUCCESS": "Success",
+        "ERROR_DELETE_ERROR": "Error",
+        "TITLE_DIALOG": "Confirm",
+        "DELETE_FILE": "Delete file.",
+        "DUPLICATE_COVERT": "Duplicate Convert"
     }
 }

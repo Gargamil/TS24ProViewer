@@ -217,13 +217,19 @@ export class FileSystems {
         fileType = this._convertToUTITypeIOS(fileType);
         return new Promise<any>((resolve, reject) => {
             if (fileType)
-                this.filePicker.pickFile(fileType).then(uri => { resolve(uri) })
+                this.filePicker.pickFile(fileType).then(uri => {
+                    uri = this.convertFileSerVice.convertPrivateTofile(uri);
+                    resolve(uri)
+                })
                     .catch(err => {
                         resolve(null);
                         console.log('Error', err);
                     });
             else
-                this.filePicker.pickFile().then(uri => { resolve(uri) })
+                this.filePicker.pickFile().then(uri => {
+                    uri = this.convertFileSerVice.convertPrivateTofile(uri);
+                    resolve(uri)
+                })
                     .catch(err => {
                         resolve(null);
                         console.log('Error', err);

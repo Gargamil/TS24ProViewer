@@ -5,9 +5,13 @@ import { File } from '@ionic-native/file/ngx';
 
 @Injectable()
 export class ConvertFileService {
-    readonly ANDROID_SDCARD_PATH = "file:///storage/"
-    readonly ANDROID_SDCARD_DEFAULT_PATH = "sdcard"
+    readonly ANDROID_SDCARD_PATH = "file:///storage/";
+    readonly ANDROID_SDCARD_DEFAULT_PATH = "sdcard";
+    readonly FILE_PATH = "file:///";
+    readonly PRIVATE_FILE_PATH = "/private/";
+
     readonly FILE_SAVE_ERROR: number = 1;
+
     constructor(
         private file: File,
         private platform: Platform,
@@ -210,6 +214,23 @@ export class ConvertFileService {
         }
         console.log(sdCardPath);
         return sdCardPath;
+    }
+
+    /**
+     * Chuyển từ private thành file
+     * Ví dụ: 
+     *         đầu vào (input) "/private/var/mobile/Containers/Data/Application/...""
+     *         đầu ra (output) "file:///var/mobile/Containers/Data/Application/..."
+     * @param fPath 
+     */
+    convertPrivateTofile(fPath: string): string {
+        var path = fPath
+        if (fPath.includes(this.PRIVATE_FILE_PATH)) {
+            let file = fPath.replace(this.PRIVATE_FILE_PATH, this.FILE_PATH)
+            path = file;
+        }
+        console.log(path);
+        return path;
     }
 
 }

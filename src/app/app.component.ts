@@ -4,7 +4,8 @@ import { Platform, Config } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuService, OpenWithService } from './services';
+import { MenuService, OpenWithService, FileSystems } from './services';
+import { FileListModel } from 'src/models/filelist-models';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,8 @@ export class AppComponent {
     private translate: TranslateService,
     private menuService: MenuService,
     private config: Config,
-    private openWith : OpenWithService
+    private openWith: OpenWithService,
+    private fileSystems: FileSystems
   ) {
     this.initializeApp();
     this.initTranslate();
@@ -35,7 +37,9 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.openWith.setupOpenwith(this.handleIntent)
+      this.openWith.setupOpenwith((intent) => {
+        this.handleIntent(intent)
+      });
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
@@ -58,7 +62,15 @@ export class AppComponent {
     return page == this.activePage;
   }
 
-  private handleIntent(intent){
+  private async handleIntent(intent) {
     console.log(intent)
+    if (intent) {
+      if (intent.items && intent.items.length > 0) {
+        let result: any = await this.fileSystems.GetFileInfo(intent.items[0].uri);
+        console.log(result);
+        FileListModel.getInstance().addFile(result);
+        FileListModel.getInstance().saveLocal();
+      }
+    }
   }
 }

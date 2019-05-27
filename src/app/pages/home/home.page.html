@@ -4,7 +4,7 @@
             <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            Home
+            {{'HOME_PAGE.TITLE'|translate}}
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -26,7 +26,7 @@
                 </div>
             </ion-item>
             <ion-item-options side="end">
-                <ion-item-option color='light'>
+                <ion-item-option color='light' (click)="ShareFile_OnClick(item,$event,slidingItem)">
                     <ion-icon slot="start" class='ion-icon' name="md-share"></ion-icon>
                     Chia sẻ
                 </ion-item-option>

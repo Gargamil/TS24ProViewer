@@ -4,7 +4,8 @@ import { FileSystems, PdfService, Commons } from 'src/app/services';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { PdfListModel } from 'src/models/pdf-list-models';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
+import { CustomeAlertDialogPage } from './custome-alert-dialog/custome-alert-dialog.page';
 @Component({
   selector: 'app-export-pdf',
   templateUrl: './export-pdf.page.html',
@@ -14,7 +15,7 @@ export class ExportPDFPage implements OnInit {
 
   pdfListFile: Array<any> = [];
   PdfListModel: any;
-  onWorkingPdfFile: any ; 
+  onWorkingPdfFile: any;
   //  = {
   //   size: null,
   //   path: null,
@@ -34,6 +35,7 @@ export class ExportPDFPage implements OnInit {
     private fileOpener: FileOpener,
     private common: Commons,
     private platform: Platform,
+    public popoverController: PopoverController
   ) {
     this.initData();
   }
@@ -77,11 +79,12 @@ export class ExportPDFPage implements OnInit {
    * @param item file pdf
    */
   onDeletePdf(item) {
-    this.common.dialog.confirm(this.translate.instant("EXPORTPDF_PAGE.DELETE_MGS"), () => {
-      this.deleteFile(item.path);
-      PdfListModel.getInstance().removeFile(item,true);
-      this.initData();
-    })
+    // this.common.dialog.confirm(this.translate.instant("EXPORTPDF_PAGE.DELETE_MGS"), () => {
+    //   this.deleteFile(item.path);
+    //   PdfListModel.getInstance().removeFile(item, true);
+    //   this.initData();
+    // });
+    this.showDeleteDialog(null, item);
   }
 
   /**
@@ -137,6 +140,7 @@ export class ExportPDFPage implements OnInit {
       let fileType = uri.substring(uri.lastIndexOf(".") + 1);
       switch (fileType) {
         case "xml":
+          break;
         case "png":
         case "jpg":
         case "html":
@@ -190,7 +194,7 @@ export class ExportPDFPage implements OnInit {
     this.onWorkingPdfFile.path = result.path;
     this.onWorkingPdfFile.isCreate = false;
     this.onWorkingPdfFile.isError = false;
-    
+
     this.addFile(this.onWorkingPdfFile);
     this.isExport = false;
   }
@@ -216,15 +220,17 @@ export class ExportPDFPage implements OnInit {
     this.addFile(this.onWorkingPdfFile)
 
     this.isExport = false;
-
-
   }
 
   private addFile(fileInfo) {
-    PdfListModel.getInstance().addFile(fileInfo,true);
+    PdfListModel.getInstance().addFile(fileInfo, true);
     this.initData();
   }
 
+  /**
+   * Xóa file
+   * @param fileUri 
+   */
   private deleteFile(fileUri) {
     this.fileSystems.RemoveFile(fileUri).then(rs => {
       if (rs) {
@@ -233,5 +239,32 @@ export class ExportPDFPage implements OnInit {
         this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.ERROR_DELETE_ERROR"))
       }
     })
+  }
+
+  /**
+   * Hiện hộp thoại xóa.
+   * @param ev 
+   * @param item 
+   */
+  async showDeleteDialog(ev: Event, item) {
+    const popover = await this.popoverController.create({
+      component: CustomeAlertDialogPage,
+      event: ev,
+      componentProps: { isRate: true }
+    });
+    popover.onDidDismiss().then((result) => {
+      if (result.data) {
+        console.log(result.data)
+        let rs = result.data;
+        if (rs.del_confirm) {
+          PdfListModel.getInstance().removeFile(item, true);
+          this.initData();
+          if (rs.del_complete) {
+            this.deleteFile(item.path);
+          }
+        }
+      }
+    });
+    return await popover.present();
   }
 }

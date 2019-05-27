@@ -5,15 +5,14 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ExportExcelPage } from './export-excel.page';
+import { CustomeAlertDialogPage } from './custome-alert-dialog.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from 'src/app/shared.module';
-import { CustomeAlertDialogPage } from '../export-pdf/custome-alert-dialog/custome-alert-dialog.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: ExportExcelPage
+    component: CustomeAlertDialogPage
   }
 ];
 
@@ -26,7 +25,5 @@ const routes: Routes = [
     TranslateModule.forChild(),
     SharedModule,
   ],
-  declarations: [ExportExcelPage],
-  entryComponents: [CustomeAlertDialogPage]
 })
-export class ExportExcelPageModule {}
+export class CustomeAlertDialogPageModule {}
