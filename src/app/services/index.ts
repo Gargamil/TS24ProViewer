@@ -6,5 +6,6 @@ export { FileSystems } from './fileSystems-service';
 export { PdfService } from './pdf-service';
 export { OpenWithService } from './open-with-service';
 export { ConvertFileService } from './convert-file-service';
+export { ShareWithService } from './shareWith-service';
 
 

@@ -28,7 +28,7 @@ export class HomePage {
         public platform: Platform,
         public common: Commons,
         public alertCtrl: AlertController,
-        private cd: ChangeDetectorRef,
+        private cd: ChangeDetectorRef
     ) {
         //this.CombineXML();
         this.FileList = FileListModel.getInstance().fileList;
@@ -189,9 +189,12 @@ export class HomePage {
         //kiểm tra file đã tồn tại trong hệ thống hay chưa, nếu có thì lấy file từ hệ thống để xem...
         let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)
         if (fileExist) {
-            console.log(directory + dirName + '/' + nameHTML);
+            //console.log(directory + dirName + '/' + nameHTML);
+            let uri = directory + dirName + '/' + nameHTML;
             this.common.loadPanel.hide();
-            this.fileSystems.viewHTMLFile(directory + dirName + '/' + nameHTML);
+            this.fileSystems.viewHTMLFile(uri, () => {
+                this.api.shareFileHTML(uri)
+            });
         }
         else {
             //nếu chưa tồn tại, đọc file xml để combine với xsl từ server
@@ -214,7 +217,9 @@ export class HomePage {
                 let uri = await this.fileSystems.writeFile(nameHTML, doc.innerHTML, this.api.getKeyTS24PRO_PROGRAM(type));
                 // this.html.nativeElement.appendChild(content);
                 this.common.loadPanel.hide();
-                this.fileSystems.viewHTMLFile(uri);
+                this.fileSystems.viewHTMLFile(uri, () => {
+                    this.api.shareFileHTML(uri)
+                });
             }
         }
         item.type = type;
@@ -225,4 +230,5 @@ export class HomePage {
 
         // this.mytime = 0;
     }
+
 }

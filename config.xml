@@ -115,9 +115,6 @@
     <plugin name="phonegap-plugin-mobile-accessibility" spec="^1.0.5" />
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-advanced-http" spec="^2.0.9" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="^5.4.4">
-        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
-    </plugin>
     <plugin name="cordova-plugin-android-permissions" spec="^1.0.0" />
     <plugin name="cordova-plugin-ionic-webview" spec="^4.0.1">
         <variable name="ANDROID_SUPPORT_ANNOTATIONS_VERSION" value="27.+" />
@@ -147,6 +144,9 @@
     <plugin name="cordova-plugin-filechooser" spec="1.2.0" />
     <plugin name="cordova-plugin-file-opener2" spec="2.2.0">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
+    </plugin>
+    <plugin name="cordova-plugin-x-socialsharing" spec="^5.4.4">
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
     </plugin>
     <engine name="android" spec="7.1.4" />
 </widget>

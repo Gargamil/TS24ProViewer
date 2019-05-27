@@ -7,7 +7,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Api } from './providers';
-import { Commons, NavControllerService, MenuService, FileSystems, PdfService, OpenWithService, ConvertFileService } from './services';
+import { Commons, NavControllerService, MenuService, FileSystems, PdfService, OpenWithService, ConvertFileService, ShareWithService } from './services';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
@@ -19,6 +19,7 @@ import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { ThemeableBrowser } from '@ionic-native/themeable-browser/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/lang/', '.json');
 }
@@ -38,11 +39,16 @@ export const MODULES = [
 
 
 export const PROVIDERS = [
+    //Service
     Api,
     Commons,
     NavControllerService,
     MenuService,
     FileSystems,
+    PdfService,
+    OpenWithService,
+    ConvertFileService,
+    ShareWithService,
     // Ionic native specific providers
     StatusBar,
     SplashScreen,
@@ -52,12 +58,10 @@ export const PROVIDERS = [
     FileTransfer,
     FileChooser,
     HTTP,
-    PdfService,
     FilePath,
-    OpenWithService,
-    ConvertFileService,
     IOSFilePicker,
     DocumentViewer,
     FileOpener,
-    ThemeableBrowser
+    ThemeableBrowser,
+    SocialSharing
 ];
