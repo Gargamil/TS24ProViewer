@@ -12,6 +12,7 @@ import { ResolveEnd } from '@angular/router';
 import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { ThemeableBrowser, ThemeableBrowserOptions, ThemeableBrowserObject } from '@ionic-native/themeable-browser/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
@@ -25,7 +26,8 @@ export class FileSystems {
         private filePicker: IOSFilePicker,
         private docViewer: DocumentViewer,
         private themeableBrowser: ThemeableBrowser,
-        private convertFileSerVice: ConvertFileService
+        private convertFileSerVice: ConvertFileService,
+        private fileOpener: FileOpener
     ) { }
     fileTransfer: FileTransferObject = this.transfer.create();
 
@@ -223,7 +225,7 @@ export class FileSystems {
                     let oldPath = this.common.getDirFromPath(uri);
                     let file_name = this.common.getFileNameFromPath(uri);
                     this.file.copyFile(oldPath, file_name, this.file.dataDirectory, file_name).then(file_Entry => {
-                       console.log(this.common.getName(this.openFileIOS) ,file_Entry.nativeURL);
+                        console.log(this.common.getName(this.openFileIOS), file_Entry.nativeURL);
                         resolve(file_Entry.nativeURL);
                     });
                 })
@@ -499,74 +501,82 @@ export class FileSystems {
         }, onShow, onClose);
     }
     viewHTMLFile(filePath, shareEvent?: any, exportPDFEvent?: any, exportExcelEvent?: any) {
-        var images = {
-            shareImage: 'assets/buttons/share.png',
-            shareImagePressed: 'assets/buttons/share_pressed.png',
-            closeImage: 'assets/buttons/close.png',
-            closeImagePressed: 'assets/buttons/close_pressed.png',
-            menuImage: 'assets/buttons/menuIOS.png',
-            menuImagePressed: 'assets/buttons/menu_pressedIOS.png'
-        };
         if (this.platform.is("ios")) {
-            images.shareImage = 'assets/buttons/shareIOS.png';
-            images.shareImagePressed = 'assets/buttons/share_pressedIOS.png';
-            images.closeImage = 'assets/buttons/closeIOS.png';
-            images.closeImagePressed = 'assets/buttons/close_pressedIOS.png';
-            images.menuImage = 'assets/buttons/menuIOS.png';
-            images.menuImagePressed = 'assets/buttons/menu_pressedIOS.png';
+            let fileType = this._converttoFileMIMEType(filePath);
+            this.fileOpener.open(filePath, this._converttoFileMIMEType(fileType))
+                .then(() => { console.log('File is opened') })
+                .catch(e => { console.log('Error opening file', e); });
         }
+        else {
+            var images = {
+                shareImage: 'assets/buttons/share.png',
+                shareImagePressed: 'assets/buttons/share_pressed.png',
+                closeImage: 'assets/buttons/close.png',
+                closeImagePressed: 'assets/buttons/close_pressed.png',
+                menuImage: 'assets/buttons/menuIOS.png',
+                menuImagePressed: 'assets/buttons/menu_pressedIOS.png'
+            };
+            if (this.platform.is("ios")) {
+                images.shareImage = 'assets/buttons/shareIOS.png';
+                images.shareImagePressed = 'assets/buttons/share_pressedIOS.png';
+                images.closeImage = 'assets/buttons/closeIOS.png';
+                images.closeImagePressed = 'assets/buttons/close_pressedIOS.png';
+                images.menuImage = 'assets/buttons/menuIOS.png';
+                images.menuImagePressed = 'assets/buttons/menu_pressedIOS.png';
+            }
 
-        const options = {
-            statusbar: {
-                color: '#ffffffff'
-            },
-            toolbar: {
-                height: 44,
-                color: '#f0f0f0ff'
-            },
-            title: {
-                color: '#003264ff',
-                showPageTitle: true
-            },
-            closeButton: {
-                wwwImage: images.closeImage,
-                wwwImagePressed: images.closeImagePressed,
-                wwwImageDensity: 2,
-                align: 'left',
-                event: 'closePressed'
-            },
-            customButtons: [
-                {
-                    wwwImage: images.shareImage,
-                    wwwImagePressed: images.shareImagePressed,
+            const options = {
+                statusbar: {
+                    color: '#ffffffff'
+                },
+                toolbar: {
+                    height: 44,
+                    color: '#f0f0f0ff'
+                },
+                title: {
+                    color: '#003264ff',
+                    showPageTitle: true
+                },
+                closeButton: {
+                    wwwImage: images.closeImage,
+                    wwwImagePressed: images.closeImagePressed,
                     wwwImageDensity: 2,
-                    align: 'right',
-                    event: 'sharePressed'
-                }
-            ],
-            menu: {
-                wwwImage: images.menuImage,
-                wwwImagePressed: images.menuImagePressed,
-                wwwImageDensity: 2,
-                title: 'Options',
-                cancel: 'Cancel',
-                align: 'right',
-                items: [
+                    align: 'left',
+                    event: 'closePressed'
+                },
+                customButtons: [
                     {
-                        event: '',
-                        label: 'View File'
-                    },
-                    {
-                        event: 'exportPDF',
-                        label: 'Export PDF'
-                    },
-                    {
-                        event: 'exportExcel',
-                        label: 'ExportExcel'
+                        wwwImage: images.shareImage,
+                        wwwImagePressed: images.shareImagePressed,
+                        wwwImageDensity: 2,
+                        align: 'right',
+                        event: 'sharePressed'
                     }
-                ]
-            },
-            backButtonCanClose: true
+                ],
+                menu: {
+                    wwwImage: images.menuImage,
+                    wwwImagePressed: images.menuImagePressed,
+                    wwwImageDensity: 2,
+                    title: 'Options',
+                    cancel: 'Cancel',
+                    align: 'right',
+                    items: [
+                        {
+                            event: '',
+                            label: 'View File'
+                        },
+                        {
+                            event: 'exportPDF',
+                            label: 'Export PDF'
+                        },
+                        {
+                            event: 'exportExcel',
+                            label: 'ExportExcel'
+                        }
+                    ]
+                },
+                backButtonCanClose: true
+            }
         }
 
         const browser: ThemeableBrowserObject = this.themeableBrowser.create(filePath, '_blank', options);
