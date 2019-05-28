@@ -147,6 +147,16 @@ export class Commons {
             return fullPath;
         return fullPath.replace(/^.*[\\\/]/, '');
     }
+
+    /**
+     * 
+     * @param fullPath 
+     */
+    getDirFromPath(fullPath: any) {
+        if (!fullPath)
+        return fullPath;
+    return fullPath.substring(0, fullPath.lastIndexOf("/") + 1);
+    }
     /**
      * @name stringParseFromDate
      */

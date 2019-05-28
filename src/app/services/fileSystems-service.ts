@@ -219,7 +219,13 @@ export class FileSystems {
             if (fileType)
                 this.filePicker.pickFile(fileType).then(uri => {
                     uri = this.convertFileSerVice.convertPrivateTofile(uri);
-                    resolve(uri)
+                    //resolve(uri)
+                    let oldPath = this.common.getDirFromPath(uri);
+                    let file_name = this.common.getFileNameFromPath(uri);
+                    this.file.copyFile(oldPath, file_name, this.file.dataDirectory, file_name).then(file_Entry => {
+                       console.log(this.common.getName(this.openFileIOS) ,file_Entry.nativeURL);
+                        resolve(file_Entry.nativeURL);
+                    });
                 })
                     .catch(err => {
                         resolve(null);
