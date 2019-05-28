@@ -30,7 +30,8 @@ export class FileSystems {
         private fileOpener: FileOpener
     ) { }
     fileTransfer: FileTransferObject = this.transfer.create();
-
+    readonly PATH_IOS_DIRECTORY = this.file.documentsDirectory;
+    readonly PATH_ANDROID_DIRECTORY = this.file.externalCacheDirectory;
     _converttoFileMIMEType(fileType: any) {
         switch (fileType) {
             case 'doc':
@@ -224,7 +225,7 @@ export class FileSystems {
                     //resolve(uri)
                     let oldPath = this.common.getDirFromPath(uri);
                     let file_name = this.common.getFileNameFromPath(uri);
-                    this.file.copyFile(oldPath, file_name, this.file.dataDirectory, file_name).then(file_Entry => {
+                    this.file.copyFile(oldPath, file_name, this.PATH_IOS_DIRECTORY, file_name).then(file_Entry => {
                         console.log(this.common.getName(this.openFileIOS), file_Entry.nativeURL);
                         resolve(file_Entry.nativeURL);
                     });
@@ -255,9 +256,9 @@ export class FileSystems {
      */
     download(urlLink, fileName) {
         return new Promise<any>((resolve, reject) => {
-            let directory = this.file.dataDirectory;
+            let directory = this.PATH_IOS_DIRECTORY;
             if (this.platform.is('android'))
-                directory = this.file.externalCacheDirectory;
+                directory = this.PATH_ANDROID_DIRECTORY;
             fileName = this._parseFilename(fileName);
             this.fileTransfer.download(urlLink, directory + fileName).then((entry) => {
                 console.log('download complete: ' + entry.toURL());
@@ -448,7 +449,7 @@ export class FileSystems {
      * @param dirName 
      */
     writeFile(fileName, fileData, dirName = null) {
-        let directory = this.file.dataDirectory;
+        let directory = this.PATH_IOS_DIRECTORY;
         if (this.platform.is('android')) {
             directory = this.file.externalCacheDirectory;
             //nếu tên file lấy từ sdCard.

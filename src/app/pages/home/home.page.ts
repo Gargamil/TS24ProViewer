@@ -188,9 +188,9 @@ export class HomePage {
         let xml = await this.fileSystems.GetDocXMLFromDevice(path);
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
         let type = this.api.CheckXML(xml);
-        let directory = this.file.dataDirectory;
+        let directory = this.fileSystems.PATH_IOS_DIRECTORY;
         if (this.platform.is('android'))
-            directory = this.file.externalCacheDirectory;
+            directory = this.fileSystems.PATH_ANDROID_DIRECTORY;
         let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
         // console.log(directory + dirName);
@@ -248,9 +248,9 @@ export class HomePage {
         let xml = await this.fileSystems.GetDocXMLFromDevice(path);
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
         let type = this.api.CheckXML(xml);
-        let directory = this.file.dataDirectory;
+        let directory = this.fileSystems.PATH_IOS_DIRECTORY;
         if (this.platform.is('android'))
-            directory = this.file.externalCacheDirectory;
+            directory = this.fileSystems.PATH_ANDROID_DIRECTORY;
         let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
         let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)
