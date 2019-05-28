@@ -16,6 +16,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
+
     constructor(private transfer: FileTransfer,
         private file: File,
         public platform: Platform,
@@ -28,10 +29,13 @@ export class FileSystems {
         private themeableBrowser: ThemeableBrowser,
         private convertFileSerVice: ConvertFileService,
         private fileOpener: FileOpener
-    ) { }
+    ) { 
+        this.PATH_ANDROID_DIRECTORY = this.file.externalCacheDirectory;
+        this.PATH_IOS_DIRECTORY = this.file.documentsDirectory;
+    }
+    PATH_IOS_DIRECTORY : any;
+    PATH_ANDROID_DIRECTORY : any;
     fileTransfer: FileTransferObject = this.transfer.create();
-    readonly PATH_IOS_DIRECTORY = this.file.documentsDirectory;
-    readonly PATH_ANDROID_DIRECTORY = this.file.externalCacheDirectory;
     _converttoFileMIMEType(fileType: any) {
         switch (fileType) {
             case 'doc':
@@ -451,7 +455,7 @@ export class FileSystems {
     writeFile(fileName, fileData, dirName = null) {
         let directory = this.PATH_IOS_DIRECTORY;
         if (this.platform.is('android')) {
-            directory = this.file.externalCacheDirectory;
+            directory = this.PATH_ANDROID_DIRECTORY;
             //nếu tên file lấy từ sdCard.
             let file = fileName.split(":");
             if (file.length > 1) {
