@@ -5,20 +5,41 @@
 </ion-header>
 
 <ion-content>
-  <ion-item lines="none">
-    <ion-label text-wrap>{{'EXPORTEXCEL_PAGE.DELETE_MGS' | translate}}</ion-label>
-  </ion-item>
-  <ion-item lines="none">
-    <ion-label text-wrap>{{'EXPORTEXCEL_PAGE.DELETE_FILE' | translate}}</ion-label>
-    <ion-checkbox slot="start" [(ngModel)]="isCompleteDelete"></ion-checkbox>
-  </ion-item>
-  <ion-row>
-    <ion-col size="3"></ion-col>
-    <ion-col size="4">
-      <ion-button (click)="onNoClick()">{{'CONFIRM.NO' | translate}}</ion-button>
-    </ion-col>
-    <ion-col size="4" style="text-align: right;">
-      <ion-button (click)="onYesClick()">{{'CONFIRM.YES' | translate}}</ion-button>
-    </ion-col>
-  </ion-row>
+  <div [ngSwitch]="type">
+    <div *ngSwitchCase="'del'">
+      <ion-item lines="none">
+        <ion-label text-wrap>{{'EXPORTEXCEL_PAGE.DELETE_MGS' | translate}}</ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label text-wrap>{{'EXPORTEXCEL_PAGE.DELETE_FILE' | translate}}</ion-label>
+        <ion-checkbox slot="start" [(ngModel)]="isCompleteDelete"></ion-checkbox>
+      </ion-item>
+      <ion-row>
+        <ion-col size="3"></ion-col>
+        <ion-col size="4">
+          <ion-button (click)="onDelClick('no')">{{'CONFIRM.NO' | translate}}</ion-button>
+        </ion-col>
+        <ion-col size="4" class="confirm-button-right">
+          <ion-button (click)="onDelClick('yes')">{{'CONFIRM.YES' | translate}}</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+    <div *ngSwitchCase="'convert'">
+      <ion-item lines="none">
+        <ion-label text-wrap>{{'EXPORTPDF_PAGE.CONVERT_TITLE' | translate}}</ion-label>
+      </ion-item>
+      <ion-row>
+        <ion-col size="4" class="confirm-button">
+          <ion-button (click)="onConvertClick('pdf')">{{'EXPORTPDF_PAGE.CONVERT_PDF' | translate}}</ion-button>
+        </ion-col>
+        <ion-col size="4" class="confirm-button">
+          <ion-button (click)="onConvertClick('excel')">{{'EXPORTPDF_PAGE.CONVERT_EXCEL' | translate}}</ion-button>
+        </ion-col>
+        <ion-col size="4" class="confirm-button">
+          <ion-button (click)="onConvertClick('')">{{'CONFIRM.CLOSE' | translate}}</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
 </ion-content>

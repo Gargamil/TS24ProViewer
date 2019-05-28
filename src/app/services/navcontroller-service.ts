@@ -27,4 +27,7 @@ export class NavControllerService {
             return this.data[key];
         return null;
     }
+    remove(data: any = '') {
+        this.data = data;
+    }
 }

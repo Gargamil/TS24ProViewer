@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { FileSystems, PdfService, Commons } from 'src/app/services';
+import { FileSystems, PdfService, Commons, NavControllerService } from 'src/app/services';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { PdfListModel } from 'src/models/pdf-list-models';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
@@ -35,13 +35,19 @@ export class ExportPDFPage implements OnInit {
     private fileOpener: FileOpener,
     private common: Commons,
     private platform: Platform,
-    public popoverController: PopoverController
+    public popoverController: PopoverController,
+    private navCtrl: NavControllerService,
   ) {
     this.initData();
   }
 
 
   ngOnInit() {
+    let uri = this.navCtrl.get("convert_uri");
+    if(uri){
+      console.log(uri);
+      this.checkFileType(uri);
+    }
   }
 
   /**
@@ -79,11 +85,6 @@ export class ExportPDFPage implements OnInit {
    * @param item file pdf
    */
   onDeletePdf(item) {
-    // this.common.dialog.confirm(this.translate.instant("EXPORTPDF_PAGE.DELETE_MGS"), () => {
-    //   this.deleteFile(item.path);
-    //   PdfListModel.getInstance().removeFile(item, true);
-    //   this.initData();
-    // });
     this.showDeleteDialog(null, item);
   }
 
@@ -198,6 +199,7 @@ export class ExportPDFPage implements OnInit {
 
     this.addFile(this.onWorkingPdfFile);
     this.isExport = false;
+    this.navCtrl.remove();
   }
 
   /**
@@ -221,6 +223,7 @@ export class ExportPDFPage implements OnInit {
     this.addFile(this.onWorkingPdfFile)
 
     this.isExport = false;
+    this.navCtrl.remove();
   }
 
   private createPdfFromXml(uri: string) {
@@ -255,7 +258,7 @@ export class ExportPDFPage implements OnInit {
     const popover = await this.popoverController.create({
       component: CustomeAlertDialogPage,
       event: ev,
-      componentProps: { isRate: true }
+      componentProps: { type: "del" }
     });
     popover.onDidDismiss().then((result) => {
       if (result.data) {

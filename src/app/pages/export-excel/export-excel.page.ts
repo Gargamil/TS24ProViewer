@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ConvertFileService, FileSystems, Commons } from 'src/app/services';
+import { ConvertFileService, FileSystems, Commons, NavControllerService } from 'src/app/services';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
@@ -26,13 +26,19 @@ export class ExportExcelPage implements OnInit {
     private fileOpener: FileOpener,
     private common: Commons,
     private platform: Platform,
-    public popoverController: PopoverController
+    public popoverController: PopoverController,
+    private navCtrl: NavControllerService,
   ) {
     this.initData();
   }
 
 
   ngOnInit() {
+    let uri = this.navCtrl.get("convert_uri");
+    if(uri){
+      console.log(uri);
+      this.checkFileType(uri);
+    }
   }
 
   /**
@@ -40,6 +46,7 @@ export class ExportExcelPage implements OnInit {
    */
   initData() {
     this.excelListFile = ExcelListModel.getInstance().fileList;
+ 
   }
   /**
   * Mở file excel
@@ -180,6 +187,7 @@ export class ExportExcelPage implements OnInit {
 
     this.addFile(this.onWorkingExcelFile);
     this.isExport = false;
+    this.navCtrl.remove();
   }
 
   /**
@@ -203,6 +211,7 @@ export class ExportExcelPage implements OnInit {
     this.addFile(this.onWorkingExcelFile)
 
     this.isExport = false;
+    this.navCtrl.remove();
   }
 
   private createExcelromXml(uri) {
@@ -239,7 +248,7 @@ export class ExportExcelPage implements OnInit {
     const popover = await this.popoverController.create({
       component: CustomeAlertDialogPage,
       event: ev,
-      componentProps: { isRate: true }
+      componentProps: { type: "del" }
     });
     popover.onDidDismiss().then((result) => {
       if (result.data) {

@@ -70,7 +70,7 @@ export class RecentModel {
         this._fileList.forEach(ele => {
             if (ele.key.type == item.type) {
                 //check item đã tồn tại hay chưa,, nếu chưa thì thêm vào list item tương ứng với type
-                let index = ele.listItem.findIndex(e => e.path === item.path);
+                let index = ele.listItem.findIndex(e => e.name === item.name);
                 if (index == -1)
                     ele.listItem.push(item)
                 else {

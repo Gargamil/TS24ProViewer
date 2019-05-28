@@ -28,7 +28,10 @@
         "ERROR_DELETE_ERROR": "Error",
         "TITLE_DIALOG": "Confirm",
         "DELETE_FILE": "Delete file.",
-        "DUPLICATE_COVERT": "Duplicate Convert"
+        "DUPLICATE_COVERT": "Duplicate Convert",
+        "CONVERT_TITLE":"Convert file to ...",
+        "CONVERT_PDF":"Pdf",
+        "CONVERT_EXCEL":"Excel"
     },
     "EXPORTEXCEL_PAGE": {
         "TITLE": "Export Excel",

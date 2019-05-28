@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from 'src/pipes/pipes.module';
 import { ActionSheetPage } from './pages/home/action-sheet/action-sheet.page';
 import { CustomeAlertDialogPage } from './pages/export-pdf/custome-alert-dialog/custome-alert-dialog.page';
+import { PopoverPage } from './pages/recent/popover/popover.page';
 
 export const shared_modal = [
 ];
@@ -14,7 +15,8 @@ export const shared_modal = [
     declarations: [
         shared_modal,
         ActionSheetPage,
-        CustomeAlertDialogPage
+        CustomeAlertDialogPage,
+        PopoverPage
     ],
     imports: [IonicModule,
         CommonModule,

@@ -13,6 +13,7 @@ import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { DocumentViewer } from '@ionic-native/document-viewer/ngx';
 import { ThemeableBrowser, ThemeableBrowserOptions, ThemeableBrowserObject } from '@ionic-native/themeable-browser/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { TranslateService } from '@ngx-translate/core';
 declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
@@ -29,7 +30,8 @@ export class FileSystems {
         private docViewer: DocumentViewer,
         private themeableBrowser: ThemeableBrowser,
         public convertFileSerVice: ConvertFileService,
-        private fileOpener: FileOpener
+        private fileOpener: FileOpener,
+        private translate : TranslateService
     ) {
     }
 
@@ -632,5 +634,55 @@ export class FileSystems {
             .then(rs => {
                 return rs
             })
+    }
+
+    viewFileByDocumentViewerFull(filePath, onShow?: any, onClose?: any, onMissingApp?: any, onError?: any) {
+        let fileType = this.common.getTypeFileByPath(filePath);
+        fileType = this._converttoFileMIMEType(fileType);
+        this.docViewer.viewDocument(filePath, fileType, {
+            email: { enabled: true },
+            search: { enabled: true },
+            print: { enabled: true },
+            bookmarks: { enabled: true },
+        }, onShow, onClose, onMissingApp, onError);
+    }
+
+    /**
+     * Chuyển file uri thành url trong sytem
+     * @param uri 
+     */
+    convertUriToFileSystemUrl(uri) {
+        return new Promise(async (resolve, reject) => {
+            this.file.resolveLocalFilesystemUrl(uri).then(fileEntry => {
+                resolve(fileEntry);
+            })
+                .catch(err => {
+                    console.log(err);
+                    resolve(null);
+                })
+        })
+            .then((resutl) => {
+                return (resutl);
+            })
+            .catch(err => {
+                console.log(err);
+                return null
+            })
+
+    }
+
+    /**
+     * Mở file
+     * @param filepath 
+     */
+    openFile(filepath:string,fileType:string){
+        this.fileOpener.open(filepath, this._converttoFileMIMEType(fileType))
+        .then((any) => {
+          console.log(any);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
+        });
     }
 }

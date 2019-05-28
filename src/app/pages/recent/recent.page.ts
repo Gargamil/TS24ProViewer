@@ -2,9 +2,10 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RecentModel } from 'src/models/recent-model';
 import { FileSystems, Commons } from 'src/app/services';
 import { Api } from 'src/app/providers';
-import { Platform, IonItemSliding, AlertController } from '@ionic/angular';
+import { Platform, IonItemSliding, AlertController, PopoverController } from '@ionic/angular';
 import { File } from '@ionic-native/file/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { PopoverPage } from './popover/popover.page';
 @Component({
     selector: 'app-recent',
     templateUrl: './recent.page.html',
@@ -12,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class RecentPage implements OnInit {
     RecentFiles: any = [];
+    listFilter: any = [];
+    RecentFiles_temp: any = [];
     constructor(
         public fileSystem: FileSystems,
         public common: Commons,
@@ -19,14 +22,19 @@ export class RecentPage implements OnInit {
         private cd: ChangeDetectorRef,
         public platform: Platform,
         public translate: TranslateService,
-        public alertCtrl: AlertController
+        public alertCtrl: AlertController,
+        public popoverController: PopoverController
     ) { }
 
     ngOnInit() {
+        this.listFilter.push('Tất cả');
         this.RecentFiles = RecentModel.getInstance().fileList;
         this.RecentFiles.forEach(ele => {
             ele.open = true
+            this.listFilter.push(ele.key.name);
         });
+        this.RecentFiles_temp = this.RecentFiles;
+        console.log(this.listFilter)
         console.log(this.RecentFiles);
     }
     Group_OnClick(group) {
@@ -107,6 +115,7 @@ export class RecentPage implements OnInit {
                         recentModel.removeFile(file);
                         recentModel.saveLocal();
                         this.RecentFiles = recentModel.fileList;
+                        //this.RecentFiles_temp = this.RecentFiles;
                         this.cd.detectChanges();
                     }
                 }]
@@ -140,5 +149,31 @@ export class RecentPage implements OnInit {
         let doc = document.createElement("div");
         doc.appendChild(docFrag.cloneNode(true));
         return doc
+    }
+    async Filter_Onclick(ev) {
+        const pop = await this.popoverController.create({
+            component: PopoverPage,
+            event: ev,
+            componentProps: {
+                listItem: this.listFilter,
+            },
+        });
+        pop.onDidDismiss().then(result => {
+            if (result.data) {
+                if (result.data.trim().toLowerCase() === 'tất cả') {
+                    this.RecentFiles = RecentModel.getInstance().fileList;
+                }
+                else {
+                    this.RecentFiles = [];
+                    RecentModel.getInstance().fileList.forEach(ele => {
+                        if (ele.key.name === result.data) {
+                            this.RecentFiles.push(ele);
+                            return 0
+                        }
+                    });
+                }
+            }
+        })
+        return await pop.present();
     }
 }

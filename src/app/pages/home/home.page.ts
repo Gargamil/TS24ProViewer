@@ -221,7 +221,13 @@ export class HomePage {
             if (objCallback.content == null) {
                 //hiện thông báo có muốn xem file xml trong trường hợp combine lỗi hoặc file ko đúng
                 type = 'other';
-                this.AlertViewXML(path)
+                let filepath: any = await this.fileSystems._convertFilePathAndroid(item.path);
+                if (filepath.includes('sdcard')) {
+                    let fileName_Origin = this.common.getFileNameFromPath(item.path);
+                    fileName_Origin = decodeURIComponent(fileName_Origin);
+                    filepath = this.fileSystems.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                }
+                this.AlertViewXML(filepath)
                 this.common.loadPanel.hide();
             }
             else {

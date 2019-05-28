@@ -5,28 +5,25 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RecentPage } from './recent.page';
-import { TranslateModule } from '@ngx-translate/core';
-import { PopoverPage } from './popover/popover.page';
+import { PopoverPage } from './popover.page';
 import { SharedModule } from 'src/app/shared.module';
 
 const routes: Routes = [
     {
         path: '',
-        component: RecentPage
+        component: PopoverPage
     }
 ];
 
 @NgModule({
     imports: [
         CommonModule,
-        TranslateModule.forChild(),
         FormsModule,
         IonicModule,
         SharedModule,
+        SharedModule,
         RouterModule.forChild(routes)
     ],
-    declarations: [RecentPage],
-    entryComponents: [PopoverPage]
+    //   declarations: [PopoverPage]
 })
-export class RecentPageModule { }
+export class PopoverPageModule { }

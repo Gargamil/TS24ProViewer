@@ -36,7 +36,7 @@ export class FileListModel {
         if (this._fileList.length > 0) {
             // kiểm tra sự tồn tại của item trong danh sách
             //let index = this.isExists(item, key, this._fileList);
-            let index = this._fileList.findIndex(e => e.path === item.path)
+            let index = this._fileList.findIndex(e => e.name === item.name)
             // chưa tồn tại thì thêm vào đầu danh sách
             if (index == -1) {
                 this._fileList.unshift(item);
