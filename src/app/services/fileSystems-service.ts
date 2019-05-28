@@ -502,8 +502,8 @@ export class FileSystems {
     }
     viewHTMLFile(filePath, shareEvent?: any, exportPDFEvent?: any, exportExcelEvent?: any) {
         if (this.platform.is("ios")) {
-            let fileType = this._converttoFileMIMEType(filePath);
-            this.fileOpener.open(filePath, fileType)
+            let fileType = this.common.getTypeFileByPath(filePath);
+            this.fileOpener.open(filePath, this._converttoFileMIMEType(fileType))
                 .then(() => { console.log('File is opened') })
                 .catch(e => { console.log('Error opening file', e); });
         }
