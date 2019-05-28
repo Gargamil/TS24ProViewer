@@ -78,6 +78,7 @@ export class HomePage {
             filepath = await this.fileSystems.openFileIOS('xml');
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
         if (!filepath) {
+            this.common.loadPanel.hide();
             return null
         }
         else {
@@ -179,6 +180,7 @@ export class HomePage {
         prompt.present();
     }
     async ViewHTML(item) {
+        let type: any;
         let path = item.path;
         let name = item.name;
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
@@ -191,7 +193,7 @@ export class HomePage {
             return this.common.toast.show(this.translate.instant("RECENT_PAGE.NOT_FOUND"));
         }
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
-        let type = this.api.CheckXML(xml);
+        type = this.api.CheckXML(xml);
         let directory = this.fileSystems.PATH_IOS_DIRECTORY();
         if (this.platform.is('android'))
             directory = this.fileSystems.PATH_ANDROID_DIRECTORY();
@@ -218,6 +220,7 @@ export class HomePage {
             let objCallback = await this.api.ViewHTML(path, xml2, type);
             if (objCallback.content == null) {
                 //hiện thông báo có muốn xem file xml trong trường hợp combine lỗi hoặc file ko đúng
+                type = 'other';
                 this.AlertViewXML(path)
                 this.common.loadPanel.hide();
             }
@@ -250,6 +253,11 @@ export class HomePage {
         let nameHTML = name.substring(0, name.length - 3) + 'html';
         //đọc file xml từ path 
         let xml = await this.fileSystems.GetDocXMLFromDevice(path);
+        if (!xml) {
+            this.common.loadPanel.hide();
+            slidingItem.close();
+            return this.common.toast.show(this.translate.instant("RECENT_PAGE.NOT_FOUND"));
+        }
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
         let type = this.api.CheckXML(xml);
         let directory = this.fileSystems.PATH_IOS_DIRECTORY();

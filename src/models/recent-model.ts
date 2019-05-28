@@ -44,6 +44,13 @@ export class RecentModel {
             name: 'Thuế'
         },
         listItem: []
+    },
+    {
+        key: {
+            type: 'other',
+            name: 'Khác'
+        },
+        listItem: []
     }];
     private static createInstance(): RecentModel {
         let object = new RecentModel();

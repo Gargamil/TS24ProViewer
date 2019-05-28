@@ -16,7 +16,6 @@ export class RecentPage implements OnInit {
         public fileSystem: FileSystems,
         public common: Commons,
         public api: Api,
-        public file: File,
         private cd: ChangeDetectorRef,
         public platform: Platform,
         public translate: TranslateService,
@@ -42,9 +41,9 @@ export class RecentPage implements OnInit {
             //trường hợp combine thành công, check file còn tồn tại trong hệ thống, nếu còn thì lấy và hiện ra
             //đổi đuôi tên file để lưu vào bộ nhớ máy
             let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
-            let directory = this.file.documentsDirectory;
+            let directory = this.fileSystem.PATH_IOS_DIRECTORY();
             if (this.platform.is('android'))
-                directory = this.file.externalCacheDirectory;
+                directory = this.fileSystem.PATH_ANDROID_DIRECTORY();
             let dirName = this.api.getKeyTS24PRO_PROGRAM(item.type);
             //kiểm tra file đã tồn tại trong hệ thống hay chưa, nếu có thì lấy file từ hệ thống để xem...
             let fileExist: any = await this.fileSystem.checkFileExist(directory + dirName, nameHTML)
@@ -65,8 +64,8 @@ export class RecentPage implements OnInit {
                 fileExist = await this.fileSystem.checkFileExist(filepath.substring(0, pos), filepath.substring(pos + 1, filepath.length))
                 //nếu tồn tại thì xem file gốc dưới dạng xml
                 if (fileExist)
-                    this.fileSystem.viewHTMLFile(item.uri, () => {
-                        this.api.shareFileHTML(item.path)
+                    this.fileSystem.viewHTMLFile(filepath, () => {
+                        this.api.shareFileHTML(filepath)
                     });
                 //không tồn tại, hiện thông báo file không tồn tại,alert xóa file
                 else {
@@ -120,9 +119,9 @@ export class RecentPage implements OnInit {
         this._timer = setTimeout(async () => {
             //đổi đuôi tên file để lưu vào bộ nhớ máy
             let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
-            let directory = this.file.documentsDirectory;
+            let directory = this.fileSystem.PATH_IOS_DIRECTORY;
             if (this.platform.is('android'))
-                directory = this.file.externalCacheDirectory;
+                directory = this.fileSystem.PATH_ANDROID_DIRECTORY;
             let dirName = this.api.getKeyTS24PRO_PROGRAM(item.type);
             //kiểm tra file đã tồn tại trong hệ thống hay chưa, nếu có thì lấy file từ hệ thống để xem...
             let fileExist: any = await this.fileSystem.checkFileExist(directory + dirName, nameHTML)
