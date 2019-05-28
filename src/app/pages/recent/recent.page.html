@@ -25,10 +25,10 @@
                         </div>
                     </ion-item>
                     <ion-item-options side="end">
-                        <!-- <ion-item-option color='light'>
+                        <ion-item-option color='light' (click)="ShareFile_OnClick(item,$event,slidingItem)">
                             <ion-icon slot="start" class='ion-icon' name="md-share"></ion-icon>
                             Chia sẻ
-                        </ion-item-option> -->
+                        </ion-item-option>
                         <ion-item-option color='light' (click)="DeleteFile_OnClick(item,$event,slidingItem)">
                             <ion-icon slot="start" color="danger" class='ion-icon' name="md-trash"></ion-icon>
                             Xóa

@@ -4,17 +4,17 @@
         "OK": "Đồng ý",
         "CANCEL": "Quay lại",
         "CLOSE": "Đóng",
-        "NO":"Không",
-        "YES":"Có"
+        "NO": "Không",
+        "YES": "Có"
     },
     "HOME_PAGE": {
         "TITLE": "Tài liệu ",
         "OPENNING": "Đang tải file, vui lòng chờ...",
         "PROCESS": "Đã tải xong, đang xử lý...",
         "CKS": "Đang xử lý chữ kí số...",
-        "DELETE_NOTIFICATION": "bạn có muốn xóa file này không ?",
+        "DELETE_NOTIFICATION": "Bạn có muốn xóa file này không ?",
         "CONFIRM": "Xác nhận",
-        "ERR_DEL_FILE": "Có lỗi khi xóa file gốc, vui lòng thử lại sau!!!",
+        "ERR_DEL_FILE": "Có lỗi khi xóa file gốc, vui lòng thử lại sau",
         "NOTIFICATION": "Thông báo",
         "NOTI_NOTSUPPORT": "TS24ProViewer không hỗ trợ xem file này, bạn có muốn xem tiếp không ?",
         "YES": "Có",
@@ -22,7 +22,7 @@
     },
     "RECENT_PAGE": {
         "TITLE": "Xem gần đây",
-        "NOT_FOUND": "File vừa chọn không tồn tại, vui lòng kiểm tra lại!!!"
+        "NOT_FOUND": "File vừa chọn không tồn tại."
     },
     "EXPORTPDF_PAGE": {
         "TITLE": "Xuất PDF",
@@ -37,9 +37,9 @@
         "EXPORT_NO_SUPPORT": "Không hổ trợ định dạng tập tin. Vui lòng chọn tập tin (html, xml)",
         "ERROR_DELETE_SUCCESS": "Đã xóa tập tin trong thư mục",
         "ERROR_DELETE_ERROR": "Không thể xóa tập tin",
-        "TITLE_DIALOG":"Xác nhận",
-        "DELETE_FILE":"Xóa tập tin trong thư mục",
-        "DUPLICATE_COVERT":"Tập tin đã được xuất. Vui lòng kiểm tra"
+        "TITLE_DIALOG": "Xác nhận",
+        "DELETE_FILE": "Xóa tập tin trong thư mục",
+        "DUPLICATE_COVERT": "Tập tin đã được xuất. Vui lòng kiểm tra"
     },
     "EXPORTEXCEL_PAGE": {
         "TITLE": "Xuất Excel",
@@ -54,8 +54,8 @@
         "EXPORT_NO_SUPPORT": "Không hổ trợ định dạng tập tin. Vui lòng chọn tập tin (html, xml)",
         "ERROR_DELETE_SUCCESS": "Đã xóa tập tin trong thư mục",
         "ERROR_DELETE_ERROR": "Không thể xóa tập tin",
-        "TITLE_DIALOG":"Xác nhận",
-        "DELETE_FILE":"Xóa tập tin trong thư mục",
-        "DUPLICATE_COVERT":"Tập tin đã được xuất. Vui lòng kiểm tra"
+        "TITLE_DIALOG": "Xác nhận",
+        "DELETE_FILE": "Xóa tập tin trong thư mục",
+        "DUPLICATE_COVERT": "Tập tin đã được xuất. Vui lòng kiểm tra"
     }
 }

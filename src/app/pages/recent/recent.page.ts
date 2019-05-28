@@ -39,6 +39,7 @@ export class RecentPage implements OnInit {
     async File_OnClick(item) {
         clearTimeout(this._timer);
         this._timer = setTimeout(async () => {
+            //trường hợp combine thành công, check file còn tồn tại trong hệ thống, nếu còn thì lấy và hiện ra
             //đổi đuôi tên file để lưu vào bộ nhớ máy
             let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
             let directory = this.file.dataDirectory;
@@ -51,22 +52,40 @@ export class RecentPage implements OnInit {
                 this.fileSystem.viewHTMLFile(item.uri, () => {
                     this.api.shareFileHTML(item.uri)
                 });
+            //trường hợp ko còn file trong hệ thống, kiểm tra file gốc còn tồn tại hay không.
             else {
-                this.common.toast.show(this.translate.instant('RECENT_PAGE.NOT_FOUND'));
-                this.ShowAlert(item)
+                //lấy filepath từ path
+                let filepath: any = await this.fileSystem._convertFilePathAndroid(item.path);
+                if (filepath.includes('sdcard')) {
+                    let fileName_Origin = this.common.getFileNameFromPath(item.path);
+                    fileName_Origin = decodeURIComponent(fileName_Origin);
+                    filepath = this.fileSystem.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                }
+                var pos = filepath.lastIndexOf("/");
+                fileExist = await this.fileSystem.checkFileExist(filepath.substring(0, pos), filepath.substring(pos + 1, filepath.length))
+                //nếu tồn tại thì xem file gốc dưới dạng xml
+                if (fileExist)
+                    this.fileSystem.viewHTMLFile(item.uri, () => {
+                        this.api.shareFileHTML(item.path)
+                    });
+                //không tồn tại, hiện thông báo file không tồn tại,alert xóa file
+                else {
+                    //this.common.toast.show(this.translate.instant('RECENT_PAGE.NOT_FOUND'));
+                    this.ShowAlert(item, null, this.translate.instant("RECENT_PAGE.NOT_FOUND") + this.translate.instant("HOME_PAGE.DELETE_NOTIFICATION"));
+                }
             }
         }, 300);
     }
     DeleteFile_OnClick(item, e: Event, slidingItem: IonItemSliding) {
         e.stopPropagation();
         console.log(e);
-        this.ShowAlert(item, slidingItem);
+        this.ShowAlert(item, slidingItem, this.translate.instant("HOME_PAGE.DELETE_NOTIFICATION"));
     }
-    async ShowAlert(file, slidingItem?: any) {
+    async ShowAlert(file, slidingItem?: any, contentalert?: string) {
         // let slidingItem: IonItemSliding;
         let prompt = await this.alertCtrl.create({
             header: this.translate.instant("HOME_PAGE.CONFIRM"),
-            message: this.translate.instant("HOME_PAGE.DELETE_NOTIFICATION"),
+            message: contentalert,
             buttons: [
                 {
                     text: this.translate.instant("HOME_PAGE.NO"),
@@ -94,5 +113,33 @@ export class RecentPage implements OnInit {
                 }]
         });
         prompt.present();
+    }
+    async ShareFile_OnClick(item, e: Event, slidingItem: IonItemSliding) {
+        e.stopPropagation();
+        clearTimeout(this._timer);
+        this._timer = setTimeout(async () => {
+            //đổi đuôi tên file để lưu vào bộ nhớ máy
+            let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
+            let directory = this.file.dataDirectory;
+            if (this.platform.is('android'))
+                directory = this.file.externalCacheDirectory;
+            let dirName = this.api.getKeyTS24PRO_PROGRAM(item.type);
+            //kiểm tra file đã tồn tại trong hệ thống hay chưa, nếu có thì lấy file từ hệ thống để xem...
+            let fileExist: any = await this.fileSystem.checkFileExist(directory + dirName, nameHTML)
+            if (fileExist)
+                this.api.shareFileHTML(item.uri)
+            else {
+                //this.common.toast.show(this.translate.instant('RECENT_PAGE.NOT_FOUND'));
+                this.ShowAlert(item, null, this.translate.instant("RECENT_PAGE.NOT_FOUND") + this.translate.instant("HOME_PAGE.DELETE_NOTIFICATION"))
+            }
+            slidingItem.close();
+        }, 300)
+    }
+    GetHTML(content) {
+        let docFrag = document.createDocumentFragment();
+        docFrag.appendChild(content);
+        let doc = document.createElement("div");
+        doc.appendChild(docFrag.cloneNode(true));
+        return doc
     }
 }

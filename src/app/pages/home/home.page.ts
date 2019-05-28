@@ -25,7 +25,6 @@ export class HomePage {
         public modalController: ModalController,
         public actionSheetController: ActionSheetController,
         public fileSystems: FileSystems,
-        public file: File,
         public platform: Platform,
         public common: Commons,
         public alertCtrl: AlertController,
@@ -38,14 +37,15 @@ export class HomePage {
     ngOnInit() {
         //this.Init();
         // this.OpenFile();
-        this.api.getINFOCKSHDDT("MIIE6zCCA9OgAwIBAgIQVAEBCExAkq7CtXeh85iC4TANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJWTjEkMCIGA1UEChMbU0FGRS1DQSBKb2ludCBTdG9jayBDb21wYW55MRAwDgYDVQQLEwdTQUZFLUNBMRAwDgYDVQQDEwdTQUZFLUNBMB4XDTE4MDYyNzA0MDczM1oXDTE5MDYyNzE2NTkwMFowgdsxIDAeBgkqhkiG9w0BCQEWEWhvdHJvQHRzMjQuY29tLnZuMS8wLQYDVQQDDCZDw5RORyBUWSBD4buUIFBI4bqmTiBUUzI0IChURVNUIENMT1VEKTEbMBkGA1UECgwSTVNUOjAzMDk0NzgzMDYtOTk5MVwwWgYDVQQHDFMyODUvOTRCIEPDoWNoIG3huqFuZyB0aMOhbmcgOCwgUGjGsOG7nW5nIDEyLCBRdeG6rW4gMTAsIFRow6BuaCBQaOG7kSBI4buTIENow60gTWluaDELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAOTdO0qaQrLreHmuj4V7C0SwQ7WWeqwrEuMOWR9wCSMP0yQRFH6izDMBsbh/2wlGj9i/Lj8SsnZx25/xYw69VSdRqiWOvXl6VhWlgYujJWacNE9tFGcNeJs+Bfie7Df/PUmE+LxXD4/uhwbq02SHzEGevdHN9sIfZA9UjJyiLO9nAgMBAAGjggGwMIIBrDCBtQYIKwYBBQUHAQEEgagwgaUwNwYIKwYBBQUHMAKGK2h0dHA6Ly9wdWJsaWMucm9vdGNhLmdvdi52bi9jcnQvbWljbnJjYS5jcnQwQAYIKwYBBQUHMAKGNGh0dHA6Ly93d3cuc2FmZWNlcnQuY29tLnZuL3d3dy9jZXJ0L1NBRkUtQ0EtMjAxNy5jZXIwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwMS5zYWZlY2VydC5jb20udm4wHQYDVR0OBBYEFI/u3s/SQBRRuzz/JKOFevpBQlfrMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU9A0UeMBITNk62psaTV+Odws2i+QwRwYDVR0gBEAwPjA8BghghUADAQIDBDAwMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnNhZmVjZXJ0LmNvbS52bi93d3cvcnBhMCwGA1UdHwQlMCMwIaAfoB2GG2h0dHA6Ly9jcmwxLnNhZmVjZXJ0LmNvbS52bjAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4IBAQAYUmXR+gOiZ2B+0Ll9s56erUv3QWImYBd1S6jkUyrA+JSMUJn5X7bn8j0YFlI1Zf58gNMdUkMCH1u4GA4C+WEjyHRtLc2f5hwAazubzHJVTStYvYTH+PGQEF4gkvsIqoJetM5VewLUs182BaI/yu9mb53/nZ+JE+umBTmSV/8sBh8yzW0yrg7K5xUpVpT+3iivLG76prdtNCKdV6k/ShjGnqWTWoVBxywXEpr+db9afx+5zsKYF/UaqcFGf8XPnZxCVoG3d4d3m1kVH5jWJdPG3qDPDZjEYBsH1rzD9RpnILO6YX/ryi1YN2QN0vvoUSAytFd3SVppWkaGQfKAmeUk")
-            .then(res => console.log(res));
+        // this.api.getINFOCKSHDDT("MIIE6zCCA9OgAwIBAgIQVAEBCExAkq7CtXeh85iC4TANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJWTjEkMCIGA1UEChMbU0FGRS1DQSBKb2ludCBTdG9jayBDb21wYW55MRAwDgYDVQQLEwdTQUZFLUNBMRAwDgYDVQQDEwdTQUZFLUNBMB4XDTE4MDYyNzA0MDczM1oXDTE5MDYyNzE2NTkwMFowgdsxIDAeBgkqhkiG9w0BCQEWEWhvdHJvQHRzMjQuY29tLnZuMS8wLQYDVQQDDCZDw5RORyBUWSBD4buUIFBI4bqmTiBUUzI0IChURVNUIENMT1VEKTEbMBkGA1UECgwSTVNUOjAzMDk0NzgzMDYtOTk5MVwwWgYDVQQHDFMyODUvOTRCIEPDoWNoIG3huqFuZyB0aMOhbmcgOCwgUGjGsOG7nW5nIDEyLCBRdeG6rW4gMTAsIFRow6BuaCBQaOG7kSBI4buTIENow60gTWluaDELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAOTdO0qaQrLreHmuj4V7C0SwQ7WWeqwrEuMOWR9wCSMP0yQRFH6izDMBsbh/2wlGj9i/Lj8SsnZx25/xYw69VSdRqiWOvXl6VhWlgYujJWacNE9tFGcNeJs+Bfie7Df/PUmE+LxXD4/uhwbq02SHzEGevdHN9sIfZA9UjJyiLO9nAgMBAAGjggGwMIIBrDCBtQYIKwYBBQUHAQEEgagwgaUwNwYIKwYBBQUHMAKGK2h0dHA6Ly9wdWJsaWMucm9vdGNhLmdvdi52bi9jcnQvbWljbnJjYS5jcnQwQAYIKwYBBQUHMAKGNGh0dHA6Ly93d3cuc2FmZWNlcnQuY29tLnZuL3d3dy9jZXJ0L1NBRkUtQ0EtMjAxNy5jZXIwKAYIKwYBBQUHMAGGHGh0dHA6Ly9vY3NwMS5zYWZlY2VydC5jb20udm4wHQYDVR0OBBYEFI/u3s/SQBRRuzz/JKOFevpBQlfrMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU9A0UeMBITNk62psaTV+Odws2i+QwRwYDVR0gBEAwPjA8BghghUADAQIDBDAwMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnNhZmVjZXJ0LmNvbS52bi93d3cvcnBhMCwGA1UdHwQlMCMwIaAfoB2GG2h0dHA6Ly9jcmwxLnNhZmVjZXJ0LmNvbS52bjAOBgNVHQ8BAf8EBAMCBPAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4IBAQAYUmXR+gOiZ2B+0Ll9s56erUv3QWImYBd1S6jkUyrA+JSMUJn5X7bn8j0YFlI1Zf58gNMdUkMCH1u4GA4C+WEjyHRtLc2f5hwAazubzHJVTStYvYTH+PGQEF4gkvsIqoJetM5VewLUs182BaI/yu9mb53/nZ+JE+umBTmSV/8sBh8yzW0yrg7K5xUpVpT+3iivLG76prdtNCKdV6k/ShjGnqWTWoVBxywXEpr+db9afx+5zsKYF/UaqcFGf8XPnZxCVoG3d4d3m1kVH5jWJdPG3qDPDZjEYBsH1rzD9RpnILO6YX/ryi1YN2QN0vvoUSAytFd3SVppWkaGQfKAmeUk")
+        //     .then(res => console.log(res));
     }
     async Init() {
-        let xml = this.api.loadXml('../../../assets/file/thue.xml');
-        let type = this.api.CheckXML(xml);
-        let xml2 = await this.api.GetCKS(type, xml);
-        console.log(xml2)
+        // console.log(this.common.datetime().format('DD/MM/YYYY'));
+        // let xml = this.api.loadXml('../../../assets/file/thue.xml');
+        // let type = this.api.CheckXML(xml);
+        // let xml2 = await this.api.GetCKS(type, xml);
+        // console.log(xml2)
         // xml = this.api.DeleteAtribute(type, xml);
         // let id = this.api.GetIdXML(type, xml);
         // let link = await this.api.getFilePathXSL(type, id);
@@ -186,11 +186,15 @@ export class HomePage {
         let nameHTML = name.substring(0, name.length - 3) + 'html';
         //đọc file xml từ path 
         let xml = await this.fileSystems.GetDocXMLFromDevice(path);
+        if (!xml) {
+            this.common.loadPanel.hide();
+            return this.common.toast.show(this.translate.instant("RECENT_PAGE.NOT_FOUND"));
+        }
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
         let type = this.api.CheckXML(xml);
-        let directory = this.fileSystems.PATH_IOS_DIRECTORY;
+        let directory = this.fileSystems.PATH_IOS_DIRECTORY();
         if (this.platform.is('android'))
-            directory = this.fileSystems.PATH_ANDROID_DIRECTORY;
+            directory = this.fileSystems.PATH_ANDROID_DIRECTORY();
         let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
         // console.log(directory + dirName);
@@ -248,9 +252,9 @@ export class HomePage {
         let xml = await this.fileSystems.GetDocXMLFromDevice(path);
         //lấy loại file (thuế, bảo hiểm hoặc hóa đơn) từ file xml
         let type = this.api.CheckXML(xml);
-        let directory = this.fileSystems.PATH_IOS_DIRECTORY;
+        let directory = this.fileSystems.PATH_IOS_DIRECTORY();
         if (this.platform.is('android'))
-            directory = this.fileSystems.PATH_ANDROID_DIRECTORY;
+            directory = this.fileSystems.PATH_ANDROID_DIRECTORY();
         let dirName = this.api.getKeyTS24PRO_PROGRAM(type);
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.PROCESS'));
         let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)

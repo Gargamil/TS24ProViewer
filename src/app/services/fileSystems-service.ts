@@ -17,6 +17,7 @@ declare var fileChooser: any;
 @Injectable()
 export class FileSystems {
 
+
     constructor(private transfer: FileTransfer,
         private file: File,
         public platform: Platform,
@@ -27,14 +28,18 @@ export class FileSystems {
         private filePicker: IOSFilePicker,
         private docViewer: DocumentViewer,
         private themeableBrowser: ThemeableBrowser,
-        private convertFileSerVice: ConvertFileService,
+        public convertFileSerVice: ConvertFileService,
         private fileOpener: FileOpener
-    ) { 
-        this.PATH_ANDROID_DIRECTORY = this.file.externalCacheDirectory;
-        this.PATH_IOS_DIRECTORY = this.file.documentsDirectory;
+    ) {
     }
-    PATH_IOS_DIRECTORY : any;
-    PATH_ANDROID_DIRECTORY : any;
+
+    PATH_IOS_DIRECTORY() {
+        return this.file.documentsDirectory;
+    };
+    PATH_ANDROID_DIRECTORY() {
+        return this.file.externalCacheDirectory;
+    }
+
     fileTransfer: FileTransferObject = this.transfer.create();
     _converttoFileMIMEType(fileType: any) {
         switch (fileType) {
@@ -229,7 +234,7 @@ export class FileSystems {
                     //resolve(uri)
                     let oldPath = this.common.getDirFromPath(uri);
                     let file_name = this.common.getFileNameFromPath(uri);
-                    this.file.copyFile(oldPath, file_name, this.PATH_IOS_DIRECTORY, file_name).then(file_Entry => {
+                    this.file.copyFile(oldPath, file_name, this.PATH_IOS_DIRECTORY(), file_name).then(file_Entry => {
                         console.log(this.common.getName(this.openFileIOS), file_Entry.nativeURL);
                         resolve(file_Entry.nativeURL);
                     });
@@ -284,8 +289,7 @@ export class FileSystems {
                 size: null,
                 path: null,
                 name: null,
-                date: currentdate.getDay() + "/" + currentdate.getMonth()
-                    + "/" + currentdate.getFullYear()
+                date: this.common.datetime().format('DD/MM/YYYY')
             };
             this.file.resolveLocalFilesystemUrl(filepath)
                 .then(async rs => {
@@ -394,6 +398,7 @@ export class FileSystems {
             this.file
                 .resolveLocalFilesystemUrl(filepath)
                 .then(fileEntry => {
+                    console.log(fileEntry);
                     let { name, nativeURL } = fileEntry;
                     // get path
                     let path = nativeURL.substring(0, nativeURL.lastIndexOf("/"));
@@ -409,11 +414,11 @@ export class FileSystems {
                     console.log(xml);
                     resolve(xml);
                 })
-                .catch(e => reject(e));
+                .catch(e => resolve(null));
         });
     }
 
-    private _convertFilePathAndroid(filepath) {
+    public _convertFilePathAndroid(filepath) {
         return new Promise((resolve, reject) => {
             this.filePath.resolveNativePath(filepath)
                 .then((androidPath) => {
@@ -453,9 +458,9 @@ export class FileSystems {
      * @param dirName 
      */
     writeFile(fileName, fileData, dirName = null) {
-        let directory = this.PATH_IOS_DIRECTORY;
+        let directory = this.PATH_IOS_DIRECTORY();
         if (this.platform.is('android')) {
-            directory = this.PATH_ANDROID_DIRECTORY;
+            directory = this.PATH_ANDROID_DIRECTORY();
             //nếu tên file lấy từ sdCard.
             let file = fileName.split(":");
             if (file.length > 1) {
