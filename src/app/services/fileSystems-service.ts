@@ -577,21 +577,22 @@ export class FileSystems {
                 },
                 backButtonCanClose: true
             }
-        }
 
-        const browser: ThemeableBrowserObject = this.themeableBrowser.create(filePath, '_blank', options);
-        browser.on("sharePressed").subscribe(() => {
-            if (typeof shareEvent == 'function')
-                shareEvent();
-        });
-        browser.on("exportPDF").subscribe(() => {
-            if (typeof exportPDFEvent == 'function')
-                exportPDFEvent();
-        });
-        browser.on("exportExcel").subscribe(() => {
-            if (typeof exportExcelEvent == 'function')
-                exportExcelEvent();
-        });
+
+            const browser: ThemeableBrowserObject = this.themeableBrowser.create(filePath, '_blank', options);
+            browser.on("sharePressed").subscribe(() => {
+                if (typeof shareEvent == 'function')
+                    shareEvent();
+            });
+            browser.on("exportPDF").subscribe(() => {
+                if (typeof exportPDFEvent == 'function')
+                    exportPDFEvent();
+            });
+            browser.on("exportExcel").subscribe(() => {
+                if (typeof exportExcelEvent == 'function')
+                    exportExcelEvent();
+            });
+        }
     }
     RemoveFile(filepath) {
         return new Promise(async (resolve, reject) => {
