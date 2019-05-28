@@ -20,8 +20,12 @@ export class PdfService {
      * Tạo file pdf từ html text
      * @param fileName Tên file
      * @param pdfhtml Html content
+     * @param success 
+     * @param error 
+     * @param onStart
+     * @param destination vị trí lưu file nếu có.(path)
      */
-    createPdfFromHtmlText(pdfhtml: any, pdfFileName: any, onStart, success, error) {
+    createPdfFromHtmlText(pdfhtml: any, pdfFileName: any, onStart, success, error, destination?: string) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
 
         var options = {
@@ -40,6 +44,9 @@ export class PdfService {
                 let folderpath = this.file.dataDirectory;
                 if (this.platform.is('android'))
                     folderpath = this.file.externalCacheDirectory;
+                if (destination) {
+                    folderpath = destination;
+                }
                 this.savebase64AsPDF(folderpath, pdfFileName, base64, contentType, onStart, success, error);
             })
             .catch((err) => error(err));
@@ -50,8 +57,10 @@ export class PdfService {
      * @param fileUri 
      * @param success 
      * @param error 
+     * @param onStart
+     * @param destination vị trí lưu file nếu có.(path)
      */
-    createPdfFromHtmlFileUri(fileUri, onStart, success, error) {
+    createPdfFromHtmlFileUri(fileUri, onStart, success, error, destination?: string) {
         this.file
             .resolveLocalFilesystemUrl(fileUri)
             .then(fileEntry => {
@@ -63,11 +72,11 @@ export class PdfService {
                     this.filePath.resolveNativePath(nativeURL)
                         .then((androidPath) => {
                             androidPath = this.conver.getAndroidSdcardPath(androidPath, fileEntry.fullPath);
-                            this.createPdfFromHtmlFilePath(androidPath,fileName, onStart, success, error)
+                            this.createPdfFromHtmlFilePath(androidPath, fileName, onStart, success, error, destination)
                         })
                         .catch(err => error(err));
                 } else {
-                    this.createPdfFromHtmlFilePath(nativeURL, fileName, onStart, success, error)
+                    this.createPdfFromHtmlFilePath(nativeURL, fileName, onStart, success, error, destination)
                 }
             })
             .catch((err => error(err)));
@@ -77,8 +86,12 @@ export class PdfService {
      * Tạo file pdf tử html file
      * @param htmlFilePath Đường dẫn file html
      * @param pdfFileName  Têm file pdf muốn tạo
+     * @param onStart
+     * @param success
+     * @param error
+     * @param destination vị trí lưu file nếu có.(path)
      */
-    createPdfFromHtmlFilePath(htmlFilePath: string, pdfFileName: any, onStart, success, error, ) {
+    createPdfFromHtmlFilePath(htmlFilePath: string, pdfFileName: any, onStart, success, error, destination?: string) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
         var options = {
             documentSize: 'A4',
@@ -88,6 +101,9 @@ export class PdfService {
         };
 
         let path = htmlFilePath.substring(0, htmlFilePath.lastIndexOf("/") + 1);
+        if (destination) {
+            path = destination;
+        }
         // console.log(path);
 
         if (this.platform.is('android')) {

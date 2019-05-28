@@ -127,6 +127,7 @@ export class ExportExcelPage implements OnInit {
       let fileType = uri.substring(uri.lastIndexOf(".") + 1);
       switch (fileType) {
         case "xml":
+          this.createExcelromXml(uri);
           break;
         case "html":
           this.createExcel(uri);
@@ -204,6 +205,9 @@ export class ExportExcelPage implements OnInit {
     this.isExport = false;
   }
 
+  private createExcelromXml(uri) {
+    console.log(uri)
+  }
   /**
    * Thêm file vào danh sách excel
    * @param fileInfo 

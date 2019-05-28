@@ -24,7 +24,7 @@ export class ConvertFileService {
      * @param newFileExtend 
      * @param fileUri 
      */
-    changeFileExtend(newFileExtend: string, fileUri: string, success, error) {
+    changeFileExtend(newFileExtend: string, fileUri: string, success, error, destination?: string) {
         this.file
             .resolveLocalFilesystemUrl(fileUri)
             .then(fileEntry => {
@@ -34,11 +34,11 @@ export class ConvertFileService {
                     this.filePath.resolveNativePath(nativeURL)
                         .then((androidPath) => {
                             androidPath = this.getAndroidSdcardPath(androidPath, fileEntry.fullPath);
-                            this.changeExtend(newFileExtend, androidPath, name, success, error);
+                            this.changeExtend(newFileExtend, androidPath, name, success, error, destination);
                         })
                         .catch(err => error("", err));
                 } else {
-                    this.changeExtend(newFileExtend, nativeURL, name, success, error);
+                    this.changeExtend(newFileExtend, nativeURL, name, success, error, destination);
                 }
             })
             .catch((err) => {
@@ -52,7 +52,7 @@ export class ConvertFileService {
      * @param fPath Đường dẫn file
      * @param fName Tên file
      */
-    private changeExtend(newFileExtend: string, fPath: string, fName: string, success, error) {
+    private changeExtend(newFileExtend: string, fPath: string, fName: string, success, error, destination?: string) {
         // Lấy đường dẫn thư mục cha
         let path = fPath.substring(0, fPath.lastIndexOf("/") + 1);
         let fileName = fName;
@@ -62,7 +62,11 @@ export class ConvertFileService {
             fileName = fPath.substring(fPath.lastIndexOf("/") + 1);
             fileNameWithOutExt = fileName.substring(0, fileName.lastIndexOf("."));
         }
-        this.copyFile(path, fileName, path, (fileNameWithOutExt + "." + newFileExtend), success, error, true)
+        let newPath = path;
+        if (destination) {
+            newPath = destination;
+        }
+        this.copyFile(path, fileName, newPath, (fileNameWithOutExt + "." + newFileExtend), success, error, true)
     }
 
     /**
@@ -71,7 +75,7 @@ export class ConvertFileService {
      * @param success 
      * @param error 
      */
-    convertTableHtmlToExcelByUri(fileUri: string, success, error) {
+    convertTableHtmlToExcelByUri(fileUri: string, success, error, destination?: string) {
         this.file
             .resolveLocalFilesystemUrl(fileUri)
             .then(fileEntry => {
@@ -82,11 +86,11 @@ export class ConvertFileService {
                     this.filePath.resolveNativePath(nativeURL)
                         .then((androidPath) => {
                             androidPath = this.getAndroidSdcardPath(androidPath, fileEntry.fullPath);
-                            this.convertTableHtmlToExcelByFilePath(androidPath, name, success, error);
+                            this.convertTableHtmlToExcelByFilePath(androidPath, name, success, error, destination);
                         })
                         .catch(err => error("", err));
                 } else {
-                    this.convertTableHtmlToExcelByFilePath(nativeURL, name, success, error);
+                    this.convertTableHtmlToExcelByFilePath(nativeURL, name, success, error, destination);
                 }
             })
             .catch((err => error("", err)));
@@ -99,10 +103,13 @@ export class ConvertFileService {
      * @param success 
      * @param error 
      */
-    convertTableHtmlToExcelByFilePath(filePath: string, fName: string, success, error) {
+    convertTableHtmlToExcelByFilePath(filePath: string, fName: string, success, error, destination?: string) {
         // Lấy đường dẫn thư mục cha
         let path = filePath.substring(0, filePath.lastIndexOf("/") + 1);
         console.log(path);
+        if (destination) {
+            path = destination;
+        }
         let fileName = fName;
         let fileNameWithOutExt = fName.substring(0, fName.lastIndexOf("."));
         if (this.platform.is('android')) {

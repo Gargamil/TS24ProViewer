@@ -20,7 +20,7 @@ export class RecentModel {
     _fileList: any = [{
         key: {
             type: TS24PRO_PROGRAM.BHXH,
-            name: 'Bảo hiểm xã hội',
+            name: 'iBH-XH',
         },
         listItem: []
     },

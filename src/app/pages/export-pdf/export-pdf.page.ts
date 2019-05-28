@@ -140,6 +140,7 @@ export class ExportPDFPage implements OnInit {
       let fileType = uri.substring(uri.lastIndexOf(".") + 1);
       switch (fileType) {
         case "xml":
+          this.createPdfFromXml(uri);
           break;
         case "png":
         case "jpg":
@@ -220,6 +221,10 @@ export class ExportPDFPage implements OnInit {
     this.addFile(this.onWorkingPdfFile)
 
     this.isExport = false;
+  }
+
+  private createPdfFromXml(uri: string) {
+    console.log(uri)
   }
 
   private addFile(fileInfo) {
