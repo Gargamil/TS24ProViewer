@@ -134,7 +134,7 @@
         <variable name="ANDROID_MIME_TYPE" value="*/*" />
         <variable name="ANDROID_EXTRA_ACTIONS" value="action android:name=android.intent.action.VIEW" />
         <variable name="IOS_URL_SCHEME" value="com.ts24corp.TS24ProViewer" />
-        <variable name="IOS_UNIFORM_TYPE_IDENTIFIER" value="public.xml" />
+        <variable name="IOS_UNIFORM_TYPE_IDENTIFIER" value="public.data" />
     </plugin>
     <plugin name="cordova-pdf-generator" spec="^2.0.8" />
     <plugin name="cordova-plugin-filepath" spec="1.5.5" />
@@ -149,4 +149,5 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="24.1.1+" />
     </plugin>
     <engine name="android" spec="7.1.4" />
+    <engine name="ios" spec="4.5.5" />
 </widget>

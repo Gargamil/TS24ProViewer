@@ -42,7 +42,7 @@ export class RecentPage implements OnInit {
             //trường hợp combine thành công, check file còn tồn tại trong hệ thống, nếu còn thì lấy và hiện ra
             //đổi đuôi tên file để lưu vào bộ nhớ máy
             let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
-            let directory = this.file.dataDirectory;
+            let directory = this.file.documentsDirectory;
             if (this.platform.is('android'))
                 directory = this.file.externalCacheDirectory;
             let dirName = this.api.getKeyTS24PRO_PROGRAM(item.type);
@@ -120,7 +120,7 @@ export class RecentPage implements OnInit {
         this._timer = setTimeout(async () => {
             //đổi đuôi tên file để lưu vào bộ nhớ máy
             let nameHTML = item.name.substring(0, item.name.length - 3) + 'html';
-            let directory = this.file.dataDirectory;
+            let directory = this.file.documentsDirectory;
             if (this.platform.is('android'))
                 directory = this.file.externalCacheDirectory;
             let dirName = this.api.getKeyTS24PRO_PROGRAM(item.type);
