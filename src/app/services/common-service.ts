@@ -3,6 +3,7 @@ import { LoadingController, AlertController, IonContent, ToastController } from 
 import { TranslateService } from '@ngx-translate/core';
 import { Platform } from '@ionic/angular';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { File } from '@ionic-native/file/ngx';
 import * as moment from 'moment';
 declare var startApp: any; //Launch external app
 declare var $: any;
@@ -13,7 +14,9 @@ export class Commons {
         private translate: TranslateService,
         private platform: Platform,
         private toastCtrl: ToastController,
-        private iab: InAppBrowser) { }
+        private iab: InAppBrowser,
+        private file: File
+    ) { }
     datetime = moment;
     jquery = $;
     /**
@@ -154,8 +157,8 @@ export class Commons {
      */
     getDirFromPath(fullPath: any) {
         if (!fullPath)
-        return fullPath;
-    return fullPath.substring(0, fullPath.lastIndexOf("/") + 1);
+            return fullPath;
+        return fullPath.substring(0, fullPath.lastIndexOf("/") + 1);
     }
     /**
      * @name stringParseFromDate
@@ -654,5 +657,12 @@ export class Commons {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    PATH_IOS_DIRECTORY() {
+        return this.file.documentsDirectory;
+    };
+    PATH_ANDROID_DIRECTORY() {
+        return this.file.externalCacheDirectory;
     }
 }

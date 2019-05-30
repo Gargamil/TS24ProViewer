@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { Commons } from './common-service';
 
 @Injectable()
 export class ConvertFileService {
@@ -15,7 +16,8 @@ export class ConvertFileService {
     constructor(
         private file: File,
         private platform: Platform,
-        private filePath: FilePath
+        private filePath: FilePath,
+        private common: Commons
     ) { }
 
     // Start Lam
@@ -147,9 +149,12 @@ export class ConvertFileService {
                 console.log(err);
                 if (repeat == true) {
                     if (err.code == 1 || err.code == 9) {
-                        let path = this.file.dataDirectory;
+                        let path = this.file.externalCacheDirectory;
                         if (this.platform.is('android'))
-                            path = this.file.externalRootDirectory;
+                            path = this.common.PATH_ANDROID_DIRECTORY();
+                        if (this.platform.is('ios')) {
+                            path = this.common.PATH_IOS_DIRECTORY();
+                        }
                         repeat = false;
                         this.copyFile(path, oldName, path, newName, success, error, repeat)
                     } else {
@@ -173,9 +178,12 @@ export class ConvertFileService {
                 console.log(err);
                 if (repeat == true) {
                     if (err.code == 1 || err.code == 9) {
-                        let path = this.file.dataDirectory;
+                        let path = this.file.externalCacheDirectory;
                         if (this.platform.is('android'))
-                            path = this.file.externalRootDirectory;
+                            path = this.common.PATH_ANDROID_DIRECTORY();
+                        if (this.platform.is('ios')) {
+                            path = this.common.PATH_IOS_DIRECTORY();
+                        }
                         repeat = false;
                         this.writeFile(path, filename, contentType, content, success, error, repeat)
                     } else {
@@ -233,11 +241,33 @@ export class ConvertFileService {
     convertPrivateTofile(fPath: string): string {
         var path = fPath
         if (fPath.includes(this.PRIVATE_FILE_PATH)) {
-            let file = fPath.replace(this.PRIVATE_FILE_PATH, this.FILE_PATH)
+            let replaceString = fPath.substring(0, fPath.indexOf(this.PRIVATE_FILE_PATH)) + this.PRIVATE_FILE_PATH;
+            let file = fPath.replace(replaceString, this.FILE_PATH)
             path = file;
         }
         console.log(path);
         return path;
+    }
+
+    /**
+     * Thay đổi uri cửa Ios
+     * @param uri 
+     */
+    changeIOSFilePath(uri) {
+        return new Promise<any>((resolve, reject) => {
+            uri = this.convertPrivateTofile(uri);
+            let oldPath = this.common.getDirFromPath(uri);
+            let file_name = this.common.getFileNameFromPath(uri);
+            this.file.copyFile(oldPath, file_name, this.common.PATH_IOS_DIRECTORY(), file_name).then(file_Entry => {
+                console.log(file_Entry);
+                resolve(file_Entry.nativeURL);
+            }).catch(err => {
+                resolve(null);
+                console.log('Error', err);
+            });
+        }).then(rs => {
+            return rs
+        })
     }
 
 }

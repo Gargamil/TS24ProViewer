@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { FileSystems, PdfService, Commons, NavControllerService } from 'src/app/services';
+import { FileSystems, PdfService, Commons, NavControllerService, ConvertFileService } from 'src/app/services';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { PdfListModel } from 'src/models/pdf-list-models';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 import { CustomeAlertDialogPage } from './custome-alert-dialog/custome-alert-dialog.page';
+import { Api } from 'src/app/providers';
 @Component({
   selector: 'app-export-pdf',
   templateUrl: './export-pdf.page.html',
   styleUrls: ['./export-pdf.page.scss'],
 })
 export class ExportPDFPage implements OnInit {
+
+  readonly URI = "uri"; // content://;
+  readonly PATH = "path"; // file:///storage/
 
   pdfListFile: Array<any> = [];
   PdfListModel: any;
@@ -37,6 +41,8 @@ export class ExportPDFPage implements OnInit {
     private platform: Platform,
     public popoverController: PopoverController,
     private navCtrl: NavControllerService,
+    private api: Api,
+    private convert: ConvertFileService
   ) {
     this.initData();
   }
@@ -44,10 +50,11 @@ export class ExportPDFPage implements OnInit {
 
   ngOnInit() {
     let uri = this.navCtrl.get("convert_uri");
-    if(uri){
+    if (uri) {
       console.log(uri);
       this.checkFileType(uri);
     }
+    // this.convert.convertPrivateTofile("dsadsassadvasdadsasdas/private/var/mobile/Containers/Data/Application/595443B8-54D8-4CE2-9A16-2141D8F1B5D1/tmp/com.ts24corp.TS24ProViewer-Inbox/01GTKT0001PM18E_0304859192_0000081.xml")
   }
 
   /**
@@ -138,6 +145,12 @@ export class ExportPDFPage implements OnInit {
     console.log(uri);
     let index = PdfListModel.getInstance().isExistUri(uri);
     if (index < 0) {
+      let result: any = await this.fileSystems.GetFileInfo(uri);
+      this.onWorkingPdfFile = result;
+      this.onWorkingPdfFile.orginal_path = result.path;
+      this.onWorkingPdfFile.isCreate = true;
+      this.onWorkingPdfFile.isError = false;
+      this.addFile(this.onWorkingPdfFile);
       let fileType = uri.substring(uri.lastIndexOf(".") + 1);
       switch (fileType) {
         case "xml":
@@ -146,7 +159,7 @@ export class ExportPDFPage implements OnInit {
         case "png":
         case "jpg":
         case "html":
-          this.createPdf(uri);
+          this.createPdf(this.URI, uri);
           break;
         default:
           this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.EXPORT_NO_SUPPORT"))
@@ -161,23 +174,34 @@ export class ExportPDFPage implements OnInit {
    * Tạo file pdf tử uri
    * @param uri 
    */
-  private async createPdf(uri) {
-    let result: any = await this.fileSystems.GetFileInfo(uri);
-    this.onWorkingPdfFile = result;
-    this.onWorkingPdfFile.orginal_path = result.path;
-    this.onWorkingPdfFile.isCreate = true;
-    this.onWorkingPdfFile.isError = false;
-    this.addFile(this.onWorkingPdfFile);
+  private async createPdf(from, uri) {
+    switch (from) {
+      case this.URI:
+        this.pdfService.createPdfFromHtmlFileUri(uri,
+          (folderpath, filename) => {
+            this.onStart(folderpath, filename);
+          },
+          (filEntry) => {
+            this.onSuccess(filEntry)
+          }, (type, err) => {
+            this.onError(type, err);
+          });
+        break
+      case this.PATH: {
+        let name = uri.substring(uri.lastIndexOf("/") + 1, uri.length - 3) + 'pdf'
+        this.pdfService.createPdfFromHtmlFilePath(uri, name,
+          (folderpath, filename) => {
+            this.onStart(folderpath, filename);
+          },
+          (filEntry) => {
+            this.onSuccess(filEntry)
+          }, (type, err) => {
+            this.onError(type, err);
+          });
+      }
+        break;
+    }
 
-    this.pdfService.createPdfFromHtmlFileUri(uri,
-      (folderpath, filename) => {
-        this.onStart(folderpath, filename);
-      },
-      (filEntry) => {
-        this.onSuccess(filEntry)
-      }, (type, err) => {
-        this.onError(type, err);
-      });
   }
 
   private onStart(folderpath, filename) {
@@ -192,8 +216,10 @@ export class ExportPDFPage implements OnInit {
     console.log(filEntry);
     PdfListModel.getInstance().removeFile(this.onWorkingPdfFile);
     let result: any = await this.fileSystems.GetFileInfo(filEntry.nativeURL);
+    this.onWorkingPdfFile.name = result.name;
     this.onWorkingPdfFile.date = result.date;
     this.onWorkingPdfFile.path = result.path;
+    this.onWorkingPdfFile.size = result.size;
     this.onWorkingPdfFile.isCreate = false;
     this.onWorkingPdfFile.isError = false;
 
@@ -226,8 +252,23 @@ export class ExportPDFPage implements OnInit {
     this.navCtrl.remove();
   }
 
-  private createPdfFromXml(uri: string) {
-    console.log(uri)
+  private async createPdfFromXml(uri: string) {
+    console.log(uri);
+    let file = await this.fileSystems.convertUriToFileSystemUrl(uri);
+    console.log(file)
+    if (file) {
+      let path = file.nativeURL;
+      if (this.platform.is('android')) {
+        path = await this.fileSystems._convertFilePathAndroid(path);
+        path = this.convert.getAndroidSdcardPath(path, file.nativeURLl);
+      }
+      // if (this.platform.is('ios')) {
+      //   path = this.convert.changeIOSFilePath(uri);
+      // }
+      let url = await this.api.ConvertXMLtoHTML(path)
+      console.log(uri);
+      this.createPdf(this.PATH, url);
+    }
   }
 
   private addFile(fileInfo) {

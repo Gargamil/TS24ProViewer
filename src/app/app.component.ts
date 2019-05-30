@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { MenuService, OpenWithService, FileSystems, NavControllerService, ConvertFileService } from './services';
 import { FileListModel } from 'src/models/filelist-models';
 import { CustomeAlertDialogPage } from './pages/export-pdf/custome-alert-dialog/custome-alert-dialog.page';
-import { PdfListModel } from 'src/models/pdf-list-models';
 
 @Component({
   selector: 'app-root',
@@ -71,8 +70,17 @@ export class AppComponent {
     console.log(intent)
     if (intent) {
       if (intent.items && intent.items.length > 0) {
-
-        this.fileTypeFlow(intent.items[0].uri);
+        let uri = intent.items[0].uri;
+        if (intent.items[0].path) {
+          uri = intent.items[0].path;
+          if (this.platform.is('android')) {
+            uri = "file://" + uri;
+          }
+        }
+        if (this.platform.is('ios')) {
+          uri = await this.convert.changeIOSFilePath(uri);
+        }
+        this.fileTypeFlow(uri);
       }
     }
   }
@@ -121,9 +129,6 @@ export class AppComponent {
       if (this.platform.is('android')) {
         path = await this.fileSystems._convertFilePathAndroid(path);
         path = this.convert.getAndroidSdcardPath(path, file.nativeURLl);
-      }
-      if (this.platform.is('ios')) {
-        path = this.convert.convertPrivateTofile(path);
       }
       console.log(path);
       this.fileSystems.openFile(path, "pdf")

@@ -31,7 +31,7 @@ export class FileSystems {
         private themeableBrowser: ThemeableBrowser,
         public convertFileSerVice: ConvertFileService,
         private fileOpener: FileOpener,
-        private translate : TranslateService
+        private translate: TranslateService
     ) {
     }
 
@@ -597,8 +597,10 @@ export class FileSystems {
                     shareEvent();
             });
             browser.on("exportPDF").subscribe(() => {
-                if (typeof exportPDFEvent == 'function')
+                if (typeof exportPDFEvent == 'function') {
+                    browser.close();
                     exportPDFEvent();
+                }
             });
             browser.on("exportExcel").subscribe(() => {
                 if (typeof exportExcelEvent == 'function')
@@ -675,14 +677,14 @@ export class FileSystems {
      * Mở file
      * @param filepath 
      */
-    openFile(filepath:string,fileType:string){
+    openFile(filepath: string, fileType: string) {
         this.fileOpener.open(filepath, this._converttoFileMIMEType(fileType))
-        .then((any) => {
-          console.log(any);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
-        });
+            .then((any) => {
+                console.log(any);
+            })
+            .catch((err) => {
+                console.log(err);
+                this.common.toast.show(this.translate.instant("EXPORTPDF_PAGE.OPEN_FILE_ERROR"))
+            });
     }
 }

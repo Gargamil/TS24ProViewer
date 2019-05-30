@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Api } from 'src/app/providers';
 import { ModalController, ActionSheetController, Platform, AlertController, IonItemSliding } from '@ionic/angular';
-import { FileSystems, Commons } from 'src/app/services';
+import { FileSystems, Commons, PdfService } from 'src/app/services';
 import { File } from '@ionic-native/file/ngx';
 import { FileListModel } from 'src/models/filelist-models';
 import { RecentModel } from 'src/models/recent-model';
@@ -29,7 +29,8 @@ export class HomePage {
         public common: Commons,
         public alertCtrl: AlertController,
         private cd: ChangeDetectorRef,
-        public translate: TranslateService
+        public translate: TranslateService,
+        public pdfService: PdfService
     ) {
         //this.CombineXML();
         this.FileList = FileListModel.getInstance().fileList;
@@ -68,7 +69,6 @@ export class HomePage {
         this._timer = setTimeout(() => {
             this.ViewHTML(item);
         }, 300);
-
     }
     async OpenFile() {
         let filepath: any;
@@ -181,6 +181,7 @@ export class HomePage {
     }
     async ViewHTML(item) {
         let type: any;
+        let uri: any;
         let path = item.path;
         let name = item.name;
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
@@ -204,11 +205,24 @@ export class HomePage {
         let fileExist: any = await this.fileSystems.checkFileExist(directory + dirName, nameHTML)
         if (fileExist) {
             //console.log(directory + dirName + '/' + nameHTML);
-            let uri = directory + dirName + '/' + nameHTML;
+            uri = directory + dirName + '/' + nameHTML;
             this.common.loadPanel.hide();
             this.fileSystems.viewHTMLFile(uri, () => {
                 this.api.shareFileHTML(uri)
-            });
+            },
+                () => {
+                    this.common.loadPanel.show();
+                    let namePDF = name.substring(0, name.length - 3) + 'pdf';
+                    this.pdfService.createPdfFromHtmlFilePath(uri, namePDF, () => { }, (fileEntry) => {
+                        this.fileSystems.openFile(fileEntry.nativeURL, 'pdf')
+                        this.common.loadPanel.hide();
+                    },
+                        (err) => {
+                            this.common.loadPanel.hide();
+                            this.common.toast.show(this.translate.instant('HOME_PAGE.EXPORT_ERR'))
+                        }, null);
+
+                });
             item.uri = directory + dirName + '/' + nameHTML;
         }
         else {
@@ -233,12 +247,25 @@ export class HomePage {
             else {
                 //lưu file html vừa combine vào bộ nhớ máy
                 let doc = this.GetHTML(objCallback.content);
-                let uri = await this.fileSystems.writeFile(nameHTML, doc.innerHTML, this.api.getKeyTS24PRO_PROGRAM(type));
+                uri = await this.fileSystems.writeFile(nameHTML, doc.innerHTML, this.api.getKeyTS24PRO_PROGRAM(type));
                 this.common.loadPanel.hide();
                 this.fileSystems.viewHTMLFile(uri, () => {
+                    item.uri = uri;
                     this.api.shareFileHTML(uri)
-                });
-                item.uri = uri;
+                },
+                    () => {
+                        this.common.loadPanel.show();
+                        let namePDF = name.substring(0, name.length - 3) + 'pdf';
+                        this.pdfService.createPdfFromHtmlFilePath(uri, namePDF, () => { }, (fileEntry) => {
+                            this.common.loadPanel.hide();
+                            this.fileSystems.openFile(fileEntry.nativeURL, 'pdf')
+                        },
+                            (err) => {
+                                this.common.loadPanel.hide();
+                                this.common.toast.show(this.translate.instant('HOME_PAGE.EXPORT_ERR'))
+                            }, null);
+
+                    });
             }
         }
         item.type = type;

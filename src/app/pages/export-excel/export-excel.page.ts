@@ -6,6 +6,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ExcelListModel } from 'src/models/excel-list-models';
 import { CustomeAlertDialogPage } from '../export-pdf/custome-alert-dialog/custome-alert-dialog.page';
+import { Api } from 'src/app/providers';
 
 @Component({
   selector: 'app-export-excel',
@@ -13,6 +14,8 @@ import { CustomeAlertDialogPage } from '../export-pdf/custome-alert-dialog/custo
   styleUrls: ['./export-excel.page.scss'],
 })
 export class ExportExcelPage implements OnInit {
+  readonly URI = "uri"; // content://;
+  readonly PATH = "path"; // file:///storage/
 
   excelListFile: Array<any> = [];
   onWorkingExcelFile: any;
@@ -28,6 +31,7 @@ export class ExportExcelPage implements OnInit {
     private platform: Platform,
     public popoverController: PopoverController,
     private navCtrl: NavControllerService,
+    private api: Api,
   ) {
     this.initData();
   }
@@ -35,7 +39,7 @@ export class ExportExcelPage implements OnInit {
 
   ngOnInit() {
     let uri = this.navCtrl.get("convert_uri");
-    if(uri){
+    if (uri) {
       console.log(uri);
       this.checkFileType(uri);
     }
@@ -46,7 +50,7 @@ export class ExportExcelPage implements OnInit {
    */
   initData() {
     this.excelListFile = ExcelListModel.getInstance().fileList;
- 
+
   }
   /**
   * Mở file excel
@@ -131,13 +135,18 @@ export class ExportExcelPage implements OnInit {
     console.log(uri);
     let index = ExcelListModel.getInstance().isExistUri(uri);
     if (index < 0) {
+      let result: any = await this.fileSystems.GetFileInfo(uri);
+      this.onWorkingExcelFile = result;
+      this.onWorkingExcelFile.orginal_path = result.path;
+      this.onWorkingExcelFile.isCreate = true;
+      this.onWorkingExcelFile.isError = false;
       let fileType = uri.substring(uri.lastIndexOf(".") + 1);
       switch (fileType) {
         case "xml":
           this.createExcelromXml(uri);
           break;
         case "html":
-          this.createExcel(uri);
+          this.createExcel(this.URI, uri);
           break;
         default:
           this.common.toast.show(this.translate.instant("EXPORTEXCEL_PAGE.EXPORT_NO_SUPPORT"))
@@ -152,23 +161,30 @@ export class ExportExcelPage implements OnInit {
    * Tạo file excel tử uri
    * @param uri 
    */
-  private async createExcel(uri) {
+  private async createExcel(from, uri) {
     console.log(uri);
-
-    let result: any = await this.fileSystems.GetFileInfo(uri);
-    this.onWorkingExcelFile = result;
-    this.onWorkingExcelFile.orginal_path = result.path;
-    this.onWorkingExcelFile.isCreate = true;
-    this.onWorkingExcelFile.isError = false;
     this.addFile(this.onWorkingExcelFile);
-
     this.isExport = true;
-    this.excelService.convertTableHtmlToExcelByUri(uri,
-      (filEntry) => {
-        this.onSuccess(filEntry)
-      }, (type, err) => {
-        this.onError(type, err);
-      });
+    switch (from) {
+      case this.URI:
+        this.excelService.convertTableHtmlToExcelByUri(uri,
+          (filEntry) => {
+            this.onSuccess(filEntry)
+          }, (type, err) => {
+            this.onError(type, err);
+          });
+        break
+      case this.PATH: {
+        let name = uri.substring(uri.lastIndexOf("/") + 1, uri.length - 3) + 'pdf'
+        this.excelService.convertTableHtmlToExcelByFilePath(uri, name,
+          (filEntry) => {
+            this.onSuccess(filEntry)
+          }, (type, err) => {
+            this.onError(type, err);
+          });
+      }
+        break;
+    }
   }
 
   /**
@@ -180,8 +196,10 @@ export class ExportExcelPage implements OnInit {
     // console.log(filEntry);
     ExcelListModel.getInstance().removeFile(this.onWorkingExcelFile);
     let result: any = await this.fileSystems.GetFileInfo(filEntry.nativeURL);
+    this.onWorkingExcelFile.name = result.name;
     this.onWorkingExcelFile.date = result.date;
     this.onWorkingExcelFile.path = result.path;
+    this.onWorkingExcelFile.size = result.size;
     this.onWorkingExcelFile.isCreate = false;
     this.onWorkingExcelFile.isError = false;
 
@@ -214,8 +232,23 @@ export class ExportExcelPage implements OnInit {
     this.navCtrl.remove();
   }
 
-  private createExcelromXml(uri) {
-    console.log(uri)
+  private async createExcelromXml(uri) {
+    console.log(uri);
+    let file = await this.fileSystems.convertUriToFileSystemUrl(uri);
+    console.log(file)
+    if (file) {
+      let path = file.nativeURL;
+      if (this.platform.is('android')) {
+        path = await this.fileSystems._convertFilePathAndroid(path);
+        path = this.excelService.getAndroidSdcardPath(path, file.nativeURLl);
+      }
+      // if (this.platform.is('ios')) {
+      //   path = this.excelService.convertPrivateTofile(uri);
+      // }
+      let url = await this.api.ConvertXMLtoHTML(path)
+      console.log(uri);
+      this.createExcel(this.PATH, url);
+    }
   }
   /**
    * Thêm file vào danh sách excel

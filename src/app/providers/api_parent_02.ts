@@ -281,4 +281,26 @@ export class Api_Parent_02 extends Api_Parent_01 {
         parrentNode.appendChild(textNode);
         return parrentNode
     }
+    /**
+     * 
+     * @param path path
+     */
+    async ConvertXMLtoHTML(path) {
+        let objCallback = await this.ViewHTML(path);
+        if (objCallback.content == null)
+            return null
+        let doc = this.GetHTML(objCallback.content);
+        let namexml: any = path.substring(path.lastIndexOf("/") + 1, path.length);
+        let nameHTML = namexml.substring(0, namexml.length - 3) + 'html';
+        let uri = await this.file.writeFile(nameHTML, doc.innerHTML, this.getKeyTS24PRO_PROGRAM(objCallback.type));
+        return uri
+    }
+    private GetHTML(content) {
+        let docFrag = document.createDocumentFragment();
+        docFrag.appendChild(content);
+        let doc = document.createElement("div");
+        doc.appendChild(docFrag.cloneNode(true));
+        return doc
+    }
 }
+

@@ -3,6 +3,7 @@ import { File } from '@ionic-native/file/ngx';
 import { Platform } from '@ionic/angular';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { ConvertFileService } from './convert-file-service';
+import { Commons } from './common-service';
 
 declare var cordova: any;
 
@@ -13,7 +14,8 @@ export class PdfService {
         private file: File,
         public platform: Platform,
         private filePath: FilePath,
-        private conver: ConvertFileService
+        private conver: ConvertFileService,
+        private commom: Commons
     ) { }
 
     /**
@@ -41,9 +43,12 @@ export class PdfService {
                 // To define the type of the Blob
                 console.log(base64)
                 var contentType = "application/pdf";
-                let folderpath = this.file.dataDirectory;
+                let folderpath = this.file.externalCacheDirectory;
                 if (this.platform.is('android'))
-                    folderpath = this.file.externalCacheDirectory;
+                    folderpath = this.commom.PATH_ANDROID_DIRECTORY();
+                if (this.platform.is('ios')) {
+                    folderpath = this.commom.PATH_IOS_DIRECTORY();
+                }
                 if (destination) {
                     folderpath = destination;
                 }
@@ -161,9 +166,12 @@ export class PdfService {
                 console.log(err);
                 if (repeat == true) {
                     if (err.code == 1 || err.code == 9) {
-                        let path = this.file.dataDirectory;
+                        let path = this.file.externalCacheDirectory;
                         if (this.platform.is('android'))
-                            path = this.file.externalRootDirectory;
+                            path = this.commom.PATH_ANDROID_DIRECTORY();
+                        if (this.platform.is('ios')) {
+                            path = this.commom.PATH_IOS_DIRECTORY();
+                        }
                         repeat = false;
                         this.writeFile(path, filename, dataBlob, success, error, repeat)
                     } else {

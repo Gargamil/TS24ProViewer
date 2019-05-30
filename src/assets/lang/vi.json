@@ -4,8 +4,8 @@
         "OK": "Đồng ý",
         "CANCEL": "Quay lại",
         "CLOSE": "Đóng",
-        "NO":"Không",
-        "YES":"Có"
+        "NO": "Không",
+        "YES": "Có"
     },
     "HOME_PAGE": {
         "TITLE": "Tài liệu ",
@@ -18,7 +18,8 @@
         "NOTIFICATION": "Thông báo",
         "NOTI_NOTSUPPORT": "TS24ProViewer không hỗ trợ xem file này, bạn có muốn xem tiếp không ?",
         "YES": "Có",
-        "NO": "Không"
+        "NO": "Không",
+        "EXPORT_ERR": "Có lỗi trong quá trình truyển đổi file."
     },
     "RECENT_PAGE": {
         "TITLE": "Xem gần đây",
@@ -37,12 +38,12 @@
         "EXPORT_NO_SUPPORT": "Không hổ trợ định dạng tập tin. Vui lòng chọn tập tin (html, xml)",
         "ERROR_DELETE_SUCCESS": "Đã xóa tập tin trong thư mục",
         "ERROR_DELETE_ERROR": "Không thể xóa tập tin",
-        "TITLE_DIALOG":"Xác nhận",
-        "DELETE_FILE":"Xóa tập tin trong thư mục",
-        "DUPLICATE_COVERT":"Tập tin đã được xuất. Vui lòng kiểm tra",
-        "CONVERT_TITLE":"Bạn muốn xuất tập tin sang ...",
-        "CONVERT_PDF":"Pdf",
-        "CONVERT_EXCEL":"Excel"
+        "TITLE_DIALOG": "Xác nhận",
+        "DELETE_FILE": "Xóa tập tin trong thư mục",
+        "DUPLICATE_COVERT": "Tập tin đã được xuất. Vui lòng kiểm tra",
+        "CONVERT_TITLE": "Bạn muốn xuất tập tin sang ...",
+        "CONVERT_PDF": "Pdf",
+        "CONVERT_EXCEL": "Excel"
     },
     "EXPORTEXCEL_PAGE": {
         "TITLE": "Xuất Excel",
@@ -57,8 +58,8 @@
         "EXPORT_NO_SUPPORT": "Không hổ trợ định dạng tập tin. Vui lòng chọn tập tin (html, xml)",
         "ERROR_DELETE_SUCCESS": "Đã xóa tập tin trong thư mục",
         "ERROR_DELETE_ERROR": "Không thể xóa tập tin",
-        "TITLE_DIALOG":"Xác nhận",
-        "DELETE_FILE":"Xóa tập tin trong thư mục",
-        "DUPLICATE_COVERT":"Tập tin đã được xuất. Vui lòng kiểm tra"
+        "TITLE_DIALOG": "Xác nhận",
+        "DELETE_FILE": "Xóa tập tin trong thư mục",
+        "DUPLICATE_COVERT": "Tập tin đã được xuất. Vui lòng kiểm tra"
     }
 }
