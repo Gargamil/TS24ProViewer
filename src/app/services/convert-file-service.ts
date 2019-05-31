@@ -258,11 +258,13 @@ export class ConvertFileService {
             uri = this.convertPrivateTofile(uri);
             let oldPath = this.common.getDirFromPath(uri);
             let file_name = this.common.getFileNameFromPath(uri);
+            console.log(oldPath);
+            console.log(file_name);
             this.file.copyFile(oldPath, file_name, this.common.PATH_IOS_DIRECTORY(), file_name).then(file_Entry => {
                 console.log(file_Entry);
                 resolve(file_Entry.nativeURL);
             }).catch(err => {
-                resolve(null);
+                resolve(this.common.PATH_IOS_DIRECTORY() + file_name);
                 console.log('Error', err);
             });
         }).then(rs => {

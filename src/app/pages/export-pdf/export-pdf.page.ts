@@ -188,7 +188,8 @@ export class ExportPDFPage implements OnInit {
           });
         break
       case this.PATH: {
-        let name = uri.substring(uri.lastIndexOf("/") + 1, uri.length - 3) + 'pdf'
+        let name = this.common.getFileNameFromPath(uri);
+        name = name.substring(0, name.lastIndexOf(".")) + '.pdf';
         this.pdfService.createPdfFromHtmlFilePath(uri, name,
           (folderpath, filename) => {
             this.onStart(folderpath, filename);
@@ -252,7 +253,7 @@ export class ExportPDFPage implements OnInit {
     this.navCtrl.remove();
   }
 
-  private async createPdfFromXml(uri: string) {
+  async createPdfFromXml(uri: string) {
     console.log(uri);
     let file = await this.fileSystems.convertUriToFileSystemUrl(uri);
     console.log(file)
@@ -265,8 +266,8 @@ export class ExportPDFPage implements OnInit {
       // if (this.platform.is('ios')) {
       //   path = this.convert.changeIOSFilePath(uri);
       // }
-      let url = await this.api.ConvertXMLtoHTML(path)
-      console.log(uri);
+      let url = await this.api.ConvertXMLtoHTML(path);
+      console.log("URI_HTML",url);
       this.createPdf(this.PATH, url);
     }
   }

@@ -6,7 +6,7 @@ import { ConvertFileService } from './convert-file-service';
 import { Commons } from './common-service';
 
 declare var cordova: any;
-
+declare var cordova: any;
 @Injectable()
 export class PdfService {
     readonly FILE_SAVE_ERROR: number = 1;
@@ -98,38 +98,66 @@ export class PdfService {
      */
     createPdfFromHtmlFilePath(htmlFilePath: string, pdfFileName: any, onStart, success, error, destination?: string) {
         pdfFileName = pdfFileName || 'myPdfFile.pdf';
-        var options = {
-            documentSize: 'A4',
-            type: 'base64',
-            landscape: 'portrait',
-            fileName: pdfFileName
-        };
-
         let path = htmlFilePath.substring(0, htmlFilePath.lastIndexOf("/") + 1);
         if (destination) {
             path = destination;
         }
         // console.log(path);
 
+        // if (this.platform.is('android')) {
+        // Tên file trong android
+        pdfFileName = (htmlFilePath.substring(htmlFilePath.lastIndexOf("/") + 1));
+        pdfFileName = (pdfFileName.substring(0, pdfFileName.lastIndexOf("."))) + ".pdf";
+        //}
+        var options = {
+            documentSize: 'A4',
+            type: 'base64',
+            landscape: 'portrait',
+            fileName: pdfFileName
+        };
         if (this.platform.is('android')) {
-            // Tên file trong android
-            pdfFileName = (htmlFilePath.substring(htmlFilePath.lastIndexOf("/") + 1));
-            pdfFileName = (pdfFileName.substring(0, pdfFileName.lastIndexOf("."))) + ".pdf";
+            cordova.plugins.pdf.fromURL(htmlFilePath, options)
+                .then((base64) => {
+                    console.log("base64");
+                    // To define the type of the Blob
+                    var contentType = "application/pdf";
+                    // let folderpath = this.file.dataDirectory;
+                    // if (this.platform.is('android'))
+                    //     folderpath = this.file.externalCacheDirectory;
+                    this.savebase64AsPDF(path, pdfFileName, base64, contentType, onStart, success, error);
+                })
+                .catch((err) => {
+                    console.log("error pdf from url");
+                    error(err);
+                });
         }
-        // console.log(pdfFileName);
-
-        cordova.plugins.pdf.fromURL(htmlFilePath, options)
-            .then((base64) => {
-                // To define the type of the Blob
-                var contentType = "application/pdf";
-                // let folderpath = this.file.dataDirectory;
-                // if (this.platform.is('android'))
-                //     folderpath = this.file.externalCacheDirectory;
-                this.savebase64AsPDF(path, pdfFileName, base64, contentType, onStart, success, error);
-            })
-            .catch((err) => {
-                error(err);
-            });
+        else
+            this.file
+                .resolveLocalFilesystemUrl(htmlFilePath)
+                .then(fileEntry => {
+                    console.log(fileEntry);
+                    let { name, nativeURL } = fileEntry;
+                    // get path
+                    let path = nativeURL.substring(0, nativeURL.lastIndexOf("/"));
+                    return this.file.readAsText(path, name);
+                })
+                .then(buffer => {
+                    cordova.plugins.pdf.fromData(buffer, options)
+                        .then((base64) => {
+                            console.log("base64");
+                            // To define the type of the Blob
+                            var contentType = "application/pdf";
+                            this.savebase64AsPDF(path, pdfFileName, base64, contentType, onStart, success, error);
+                        })
+                        .catch((err) => {
+                            console.log("error pdf from url");
+                            error(err);
+                        });
+                })
+                .catch(e => {
+                    console.log("error read content html", e);
+                }
+                );
     }
 
     /**
@@ -143,7 +171,7 @@ export class PdfService {
         // Convert the base64 string in a Blob
         var dataBlob = this.b64toBlob(content, contentType);
         onStart(folderpath, filename);
-        // console.log("Starting to write the file :3");
+        console.log("Starting to write the file :3");
         this.writeFile(folderpath, filename, dataBlob, success, error, true);
 
     }

@@ -76,10 +76,11 @@ export class HomePage {
             filepath = await this.fileSystems.openFileAndroid('xml');
         if (this.platform.is('ios'))
             filepath = await this.fileSystems.openFileIOS('xml');
+        console.log(filepath);
         this.common.loadPanel.show(this.translate.instant('HOME_PAGE.OPENNING'));
         if (!filepath) {
             this.common.loadPanel.hide();
-            return null
+            return null;
         }
         else {
             let result: any = await this.fileSystems.GetFileInfo(filepath);
