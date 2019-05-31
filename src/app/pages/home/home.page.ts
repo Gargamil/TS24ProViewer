@@ -97,14 +97,14 @@ export class HomePage {
         const actionSheet = await this.actionSheetController.create({
             // header: 'Albums',
             buttons: [{
-                text: 'Mở File ',
+                text: 'Mở File XML ',
                 // role: 'destructive',
                 icon: 'folder',
                 handler: () => {
                     this.OpenFile();
                 }
             }, {
-                text: 'Cancel',
+                text: 'Hủy',
                 icon: 'close',
                 role: 'cancel',
                 handler: () => {
@@ -212,7 +212,7 @@ export class HomePage {
                 this.api.shareFileHTML(uri)
             },
                 () => {
-                    this.common.loadPanel.show();
+                    this.common.loadPanel.show('Đang xuất file ra PDF');
                     let namePDF = name.substring(0, name.length - 3) + 'pdf';
                     this.pdfService.createPdfFromHtmlFilePath(uri, namePDF, () => { }, (fileEntry) => {
                         this.fileSystems.openFile(fileEntry.nativeURL, 'pdf')
@@ -255,7 +255,7 @@ export class HomePage {
                     this.api.shareFileHTML(uri)
                 },
                     () => {
-                        this.common.loadPanel.show();
+                        this.common.loadPanel.show('Đang xuất file ra PDF');
                         let namePDF = name.substring(0, name.length - 3) + 'pdf';
                         this.pdfService.createPdfFromHtmlFilePath(uri, namePDF, () => { }, (fileEntry) => {
                             this.common.loadPanel.hide();

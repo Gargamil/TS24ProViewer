@@ -4,9 +4,10 @@ import { FileSystems, PdfService, Commons, NavControllerService, ConvertFileServ
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { PdfListModel } from 'src/models/pdf-list-models';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController, AlertController } from '@ionic/angular';
 import { CustomeAlertDialogPage } from './custome-alert-dialog/custome-alert-dialog.page';
 import { Api } from 'src/app/providers';
+import { FileListModel } from 'src/models/filelist-models';
 @Component({
   selector: 'app-export-pdf',
   templateUrl: './export-pdf.page.html',
@@ -42,7 +43,8 @@ export class ExportPDFPage implements OnInit {
     public popoverController: PopoverController,
     private navCtrl: NavControllerService,
     private api: Api,
-    private convert: ConvertFileService
+    private convert: ConvertFileService,
+    public alertCtrl: AlertController,
   ) {
     this.initData();
   }
@@ -92,7 +94,8 @@ export class ExportPDFPage implements OnInit {
    * @param item file pdf
    */
   onDeletePdf(item) {
-    this.showDeleteDialog(null, item);
+    // this.showDeleteDialog(null, item);
+    this.showDeleteAlert(item);
   }
 
   /**
@@ -253,7 +256,7 @@ export class ExportPDFPage implements OnInit {
     this.navCtrl.remove();
   }
 
-  async createPdfFromXml(uri: string) {
+  private async createPdfFromXml(uri: string) {
     console.log(uri);
     let file = await this.fileSystems.convertUriToFileSystemUrl(uri);
     console.log(file)
@@ -266,8 +269,8 @@ export class ExportPDFPage implements OnInit {
       // if (this.platform.is('ios')) {
       //   path = this.convert.changeIOSFilePath(uri);
       // }
-      let url = await this.api.ConvertXMLtoHTML(path);
-      console.log("URI_HTML",url);
+      let url = await this.api.ConvertXMLtoHTML(path)
+      console.log(uri);
       this.createPdf(this.PATH, url);
     }
   }
@@ -316,5 +319,44 @@ export class ExportPDFPage implements OnInit {
       }
     });
     return await popover.present();
+  }
+
+  /**
+     * hiện thông báo xóa file,nếu đồng ý: xóa file và cập nhật lại local storage
+     * @param item 
+     */
+  async showDeleteAlert(file) {
+    // let slidingItem: IonItemSliding;
+    let prompt = await this.alertCtrl.create({
+      header: this.translate.instant("EXPORTPDF_PAGE.TITLE_DIALOG"),
+      message: this.translate.instant("EXPORTPDF_PAGE.DELETE_MGS"),
+      inputs: [
+        {
+          type: 'checkbox',
+          label: 'Xóa tập tin trong thư mục',
+          value: 'deleteAll',
+          checked: false
+        }],
+      buttons: [
+        {
+          text: this.translate.instant("CONFIRM.NO"),
+          handler: data => {
+            console.log("cancel clicked");
+            console.log(data);
+          }
+        },
+        {
+          text: this.translate.instant("CONFIRM.YES"),
+          handler: async data => {
+            console.log("Xóa clicked");
+            PdfListModel.getInstance().removeFile(file, true);
+            console.log(data);
+            if (data) {
+              this.deleteFile(file.path);
+            }
+          }
+        }]
+    });
+    prompt.present();
   }
 }
