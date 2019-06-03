@@ -62,13 +62,16 @@ export class RecentPage implements OnInit {
             //trường hợp ko còn file trong hệ thống, kiểm tra file gốc còn tồn tại hay không.
             else {
                 //lấy filepath từ path
-                let filepath: any = await this.fileSystem._convertFilePathAndroid(item.path);
-                if (filepath.includes('sdcard')) {
-                    let fileName_Origin = this.common.getFileNameFromPath(item.path);
-                    fileName_Origin = decodeURIComponent(fileName_Origin);
-                    filepath = this.fileSystem.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                let filepath = item.path;
+                if (this.platform.is("android")) {
+                    filepath = await this.fileSystem._convertFilePathAndroid(item.path);
+                    if (filepath.includes('sdcard')) {
+                        let fileName_Origin = this.common.getFileNameFromPath(item.path);
+                        fileName_Origin = decodeURIComponent(fileName_Origin);
+                        filepath = this.fileSystem.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                    }
+                    var pos = filepath.lastIndexOf("/");
                 }
-                var pos = filepath.lastIndexOf("/");
                 fileExist = await this.fileSystem.checkFileExist(filepath.substring(0, pos), filepath.substring(pos + 1, filepath.length))
                 //nếu tồn tại thì xem file gốc dưới dạng xml
                 if (fileExist)

@@ -36,7 +36,8 @@ export class FileSystems {
     }
 
     PATH_IOS_DIRECTORY() {
-        return this.file.documentsDirectory;
+        return this.file.documentsDirectory
+            ;
     };
     PATH_ANDROID_DIRECTORY() {
         return this.file.externalCacheDirectory;
@@ -232,23 +233,23 @@ export class FileSystems {
         var file_name;
         return new Promise<any>((resolve, reject) => {
             // if (fileType)
-                this.filePicker.pickFile(fileType).then(uri => {
-                    uri = this.convertFileSerVice.convertPrivateTofile(uri);
-                    //resolve(uri)
-                    let oldPath = this.common.getDirFromPath(uri);
-                    file_name = this.common.getFileNameFromPath(uri);
-                    this.file.copyFile(oldPath, file_name, this.PATH_IOS_DIRECTORY(), file_name).then(file_Entry => {
-                        console.log(this.common.getName(this.openFileIOS), file_Entry.nativeURL);
-                        resolve(file_Entry.nativeURL);
-                    }).catch(reason=> {
-                        resolve(this.PATH_IOS_DIRECTORY() + file_name);
-                        console.log("CopyFile", reason);
-                    });
-                })
-                    .catch(err => {
-                        resolve(null);
-                        console.log('Error', err);
-                    });
+            this.filePicker.pickFile(fileType).then(uri => {
+                uri = this.convertFileSerVice.convertPrivateTofile(uri);
+                //resolve(uri)
+                let oldPath = this.common.getDirFromPath(uri);
+                file_name = this.common.getFileNameFromPath(uri);
+                this.file.copyFile(oldPath, file_name, this.PATH_IOS_DIRECTORY(), file_name).then(file_Entry => {
+                    console.log(this.common.getName(this.openFileIOS), file_Entry.nativeURL);
+                    resolve(file_Entry.nativeURL);
+                }).catch(reason => {
+                    resolve(this.PATH_IOS_DIRECTORY() + file_name);
+                    console.log("CopyFile", reason);
+                });
+            })
+                .catch(err => {
+                    resolve(null);
+                    console.log('Error', err);
+                });
             // else
             //     this.filePicker.pickFile().then(uri => {
             //         uri = this.convertFileSerVice.convertPrivateTofile(uri);
@@ -297,7 +298,7 @@ export class FileSystems {
                 name: null,
                 date: this.common.datetime().format('DD/MM/YYYY')
             };
-            console.log("BeforeGetFileInfo",filepath);
+            console.log("BeforeGetFileInfo", filepath);
             this.file.resolveLocalFilesystemUrl(filepath)
                 .then(async rs => {
                     console.log("GetFileInfo", rs);

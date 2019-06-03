@@ -118,7 +118,10 @@ export class Api_Parent_02 extends Api_Parent_01 {
             let link = await this.getFilePathXSL(type, id);
             let xsl = await this.file.loadXMLNative(link);
             if (xsl == null)
+            {
+                console.log("xsl_null",obj);
                 return obj
+                }
             else {
                 let content = this.ConvertHTML(xml, xsl);
                 obj.content = content;
