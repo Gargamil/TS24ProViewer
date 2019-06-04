@@ -106,16 +106,16 @@ export class Api_Parent_02 extends Api_Parent_01 {
             type: null
         }
         if (!xmlParam && !typeParam) {
-            xml = await this.file.GetDocXMLFromDevice(path);
+            xml = await this.file.GetDocXMLFromDevice(path); //đã check filepath đã tồn tại 
             type = this.CheckXML(xml);
         }
         obj.type = type;
-        xml = this.DeleteAtribute(type, xml);
-        let id = this.GetIdXML(type, xml);
+        xml = this.DeleteAtribute(type, xml); //luôn trả về kết quả
+        let id = this.GetIdXML(type, xml); //luôn trả về kết quả
         if (id == null)
             return obj
         else {
-            let link = await this.getFilePathXSL(type, id);
+            let link = await this.getFilePathXSL(type, id); //luôn trả về kết quả
             let xsl = await this.file.loadXMLNative(link);
             if (xsl == null)
             {
@@ -270,6 +270,8 @@ export class Api_Parent_02 extends Api_Parent_01 {
         if (type == 'bhxh') {
             //lấy time trong SigningTime và công thêm GMT+7
             let time = xml.getElementsByTagName('SigningTime')[0].childNodes[0].nodeValue;
+            if (!time)
+                time = new Date();
             // console.log(time);
             let time2 = moment(time).tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
             // console.log(time2);

@@ -6,6 +6,7 @@ import { Platform, IonItemSliding, AlertController, PopoverController } from '@i
 import { File } from '@ionic-native/file/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { PopoverPage } from './popover/popover.page';
+import { FileListModel } from 'src/models/filelist-models';
 @Component({
     selector: 'app-recent',
     templateUrl: './recent.page.html',
@@ -120,6 +121,8 @@ export class RecentPage implements OnInit {
                         this.RecentFiles = recentModel.fileList;
                         //this.RecentFiles_temp = this.RecentFiles;
                         this.cd.detectChanges();
+                        FileListModel.getInstance().removeFile(file);
+                        FileListModel.getInstance().saveLocal();
                     }
                 }]
         });

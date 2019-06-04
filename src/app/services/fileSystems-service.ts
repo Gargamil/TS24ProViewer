@@ -436,7 +436,10 @@ export class FileSystems {
             this.filePath.resolveNativePath(filepath)
                 .then((androidPath) => {
                     resolve(androidPath);
-                })
+                }).catch(error => {
+                    console.log(error);
+                    resolve(filepath);
+                });
 
         }).then(result => {
             return result;
@@ -642,6 +645,12 @@ export class FileSystems {
                             resolve(false)
                         }
                     )
+                }, reject => {
+                    console.log(reject);
+                    resolve(false);
+                }).catch(error => {
+                    console.log(error);
+                    resolve(false);
                 });
         })
             .then(rs => {

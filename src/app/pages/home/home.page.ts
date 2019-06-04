@@ -153,6 +153,8 @@ export class HomePage {
                         FileModel.saveLocal();
                         this.FileList = FileModel.fileList;
                         this.cd.detectChanges();
+                        RecentModel.getInstance().removeFile(file);
+                        RecentModel.getInstance().saveLocal();
                     }
                 }]
         });
@@ -237,14 +239,13 @@ export class HomePage {
                 //hiện thông báo có muốn xem file xml trong trường hợp combine lỗi hoặc file ko đúng
                 type = 'other';
                 let filepath = item.path;
-                if(this.platform.is("android"))
-                {
-                filepath = await this.fileSystems._convertFilePathAndroid(item.path);
-                if (filepath.includes('sdcard')) {
-                    let fileName_Origin = this.common.getFileNameFromPath(item.path);
-                    fileName_Origin = decodeURIComponent(fileName_Origin);
-                    filepath = this.fileSystems.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
-                }
+                if (this.platform.is("android")) {
+                    filepath = await this.fileSystems._convertFilePathAndroid(item.path);
+                    if (filepath.includes('sdcard')) {
+                        let fileName_Origin = this.common.getFileNameFromPath(item.path);
+                        fileName_Origin = decodeURIComponent(fileName_Origin);
+                        filepath = this.fileSystems.convertFileSerVice.getAndroidSdcardPathFromFileName(filepath, fileName_Origin);
+                    }
                 }
                 this.AlertViewXML(filepath)
                 this.common.loadPanel.hide();
