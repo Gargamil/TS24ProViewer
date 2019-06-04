@@ -304,15 +304,20 @@ export class FileSystems {
                     console.log("GetFileInfo", rs);
                     obj.size = await this.GetSizeFile(rs);
                     obj.path = rs.nativeURL;
-                    //check if the file get from sdCard
-                    if (this.platform.is("android")) {
-                        let file = rs.name.split(":");
-                        if (file.length > 1) {
-                            rs.name = file[1];
-                        }
-                    }
                     obj.name = rs.name;
-                    resolve(obj);
+                    if (this.platform.is('android')) {
+                        // Chuyển file uri thành file path
+                        this.filePath.resolveNativePath(rs.nativeURL)
+                            .then((androidPath) => {
+                                androidPath = this.convertFileSerVice.getAndroidSdcardPath(androidPath, rs.fullPath);
+                                obj.path = androidPath;
+                                obj.name = androidPath.substring(androidPath.lastIndexOf("/") + 1);
+                                resolve(obj);
+                            })
+                            .catch(err => resolve(obj));
+                    } else {
+                        resolve(obj);
+                    }
                 })
                 .then(rs => {
                     return rs
