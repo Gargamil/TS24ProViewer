@@ -36,7 +36,8 @@ export class FileSystems {
     }
 
     PATH_IOS_DIRECTORY() {
-        return this.file.documentsDirectory;
+        return this.file.documentsDirectory
+            ;
     };
     PATH_ANDROID_DIRECTORY() {
         return this.file.externalCacheDirectory;

@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 
 import { Platform, Config, PopoverController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { MenuService, OpenWithService, FileSystems, NavControllerService, ConvertFileService } from './services';
+import { MenuService, OpenWithService, FileSystems, NavControllerService, ConvertFileService, Commons } from './services';
 import { FileListModel } from 'src/models/filelist-models';
 import { CustomeAlertDialogPage } from './pages/export-pdf/custome-alert-dialog/custome-alert-dialog.page';
 
@@ -26,7 +26,9 @@ export class AppComponent {
     private fileSystems: FileSystems,
     private navCtrl: NavControllerService,
     public popoverController: PopoverController,
-    private convert: ConvertFileService
+    private convert: ConvertFileService,
+    protected common: Commons,
+    private cdf: ChangeDetectorRef,
   ) {
     this.initializeApp();
     this.initTranslate();
@@ -67,9 +69,10 @@ export class AppComponent {
   }
 
   private async handleIntent(intent) {
-    console.log(intent)
+    console.log(intent);
     if (intent) {
       if (intent.items && intent.items.length > 0) {
+        this.common.loadPanel.show();
         let uri = intent.items[0].uri;
         if (intent.items[0].path) {
           uri = intent.items[0].path;
@@ -78,9 +81,13 @@ export class AppComponent {
           }
         }
         if (this.platform.is('ios')) {
-          uri = await this.convert.changeIOSFilePath(uri);
+          let data = intent.items[0].data;
+          console.log("FileDataOpenWith", data);
+          uri = await this.convert.changeIOSFilePath(data);
+          console.log("IOS URI",uri);
         }
         this.fileTypeFlow(uri);
+        this.common.loadPanel.hide();
       }
     }
   }
@@ -114,6 +121,7 @@ export class AppComponent {
       console.log(result);
       FileListModel.getInstance().addFile(result);
       FileListModel.getInstance().saveLocal();
+      this.cdf.detectChanges();
     }
   }
 
