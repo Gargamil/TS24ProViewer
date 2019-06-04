@@ -32,7 +32,7 @@ export class MenuService {
                     { "title": values.HOME_PAGE.TITLE, "icon": "home", url: '/home', },
                     { "title": values.RECENT_PAGE.TITLE, "icon": "list-box", url: '/recent', },
                     { "title": values.EXPORTPDF_PAGE.TITLE, "icon": "list-box", url: '/export-pdf', },
-                    { "title": values.EXPORTEXCEL_PAGE.TITLE, "icon": "list-box", url: '/export-excel', }
+                    // { "title": values.EXPORTEXCEL_PAGE.TITLE, "icon": "list-box", url: '/export-excel', }
                 ]);
             });
     }

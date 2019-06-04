@@ -12,6 +12,7 @@ import { CustomeAlertDialogPage } from './pages/export-pdf/custome-alert-dialog/
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
+
 export class AppComponent {
   pages: any;
   activePage: any;
@@ -84,7 +85,7 @@ export class AppComponent {
           let data = intent.items[0].data;
           console.log("FileDataOpenWith", data);
           uri = await this.convert.changeIOSFilePath(data);
-          console.log("IOS URI",uri);
+          console.log("IOS URI", uri);
         }
         this.fileTypeFlow(uri);
         this.common.loadPanel.hide();

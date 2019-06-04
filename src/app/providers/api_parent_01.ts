@@ -12,7 +12,8 @@ export enum TS24PRO_PROGRAM {
     THUE = 'xsl/thue/tkhai/',
     BHXH = 'xsl/ibh/',
     INVOICE = 'xslts24/',
-    INVOICE_VNPT = 'xslvnpt/'
+    INVOICE_VNPT = 'xslvnpt/',
+    KETOAN = ''
 }
 @Injectable()
 export class Api_Parent_01 extends Api_Master {
