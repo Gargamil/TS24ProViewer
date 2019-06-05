@@ -309,4 +309,31 @@ export class Api_Master {
         }).then(result => { return result });
     }
 
+    // @POST 
+    // @Path("/getXSLKETOAN")
+    // @Produces("application/json; charset=utf-8")
+    // @Consumes("application/json")
+    // @Secured (ROLE_ACCESS) // REST SERVICE SECURITY: BASIC AUTHENTICATION
+    // Response getXSLKETOAN(@QueryParam("maToKhai")String maToKhai,@QueryParam("sKey")String sKey);
+
+    getXSLKETOAN(maToKhai) {
+        return new Promise<any>((resolve, reject) => {
+            let serialize = Object.assign({}, this._wsTS24.key);
+            serialize.maToKhai = maToKhai;
+            this.http.post(this._wsTS24.url + 'getXSLKETOAN?' + this._wsTS24._convertSerialize(serialize), {}, this._wsTS24.header).subscribe((data: any) => {
+                console.log(data);
+                if (data != null || undefined) {
+                    if (data.objKetQua.maKetQua.includes("XSL_1111")) {
+                        resolve(data.base64Content);
+                    }
+                    else resolve(null);
+                }
+                else resolve(null);
+            }, error => {
+                resolve(null);
+                console.log(this.Common.getName(() => this.getXSLHDDT), error.message);
+            });
+        }).then(result => { return result });
+    }
+
 }

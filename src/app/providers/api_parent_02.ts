@@ -52,6 +52,10 @@ export class Api_Parent_02 extends Api_Parent_01 {
                 if (xml.firstChild.nodeName)
                     return xml.firstChild.nodeName;
                 else return null;
+            case TS24PRO_PROGRAM.KETOAN:
+                if (xml.firstChild.nodeName)
+                    return xml.firstChild.nodeName;
+                else return null;
             case TS24PRO_PROGRAM.INVOICE:
                 if (xml.getElementsByTagName('inv:MauIn').length > 0)
                     return xml.getElementsByTagName('inv:MauIn')[0].childNodes[0].nodeValue;
@@ -76,7 +80,12 @@ export class Api_Parent_02 extends Api_Parent_01 {
             return TS24PRO_PROGRAM.INVOICE
         else if (xml.getElementsByTagName('Invoice').length > 0)
             return TS24PRO_PROGRAM.INVOICE_VNPT
-        else return TS24PRO_PROGRAM.BHXH
+        else {
+            let name = xml.firstChild.nodeName;
+            if (name.substring(0, 2).includes('KT'))
+                return TS24PRO_PROGRAM.KETOAN
+            else return TS24PRO_PROGRAM.BHXH
+        }
     }
     /**
      * chuyển 2 file xml và xsl thành html fragment
@@ -117,11 +126,10 @@ export class Api_Parent_02 extends Api_Parent_01 {
         else {
             let link = await this.getFilePathXSL(type, id); //luôn trả về kết quả
             let xsl = await this.file.loadXMLNative(link);
-            if (xsl == null)
-            {
-                console.log("xsl_null",obj);
+            if (xsl == null) {
+                console.log("xsl_null", obj);
                 return obj
-                }
+            }
             else {
                 let content = this.ConvertHTML(xml, xsl);
                 obj.content = content;
@@ -168,6 +176,16 @@ export class Api_Parent_02 extends Api_Parent_01 {
                     console.log(outer);
                     console.log(xml);
                 }
+                return xml;
+            case TS24PRO_PROGRAM.KETOAN:
+                xml.firstChild.removeAttribute("xmlns:xsi");
+                xml.firstChild.removeAttribute("xmlns:xsd");
+                let outer = xml.firstChild.outerHTML;
+                outer = outer.replace(/xmlns=\"(.*?)\"/g, '');
+                let parser = new DOMParser();
+                xml = parser.parseFromString(outer, "text/xml");
+                console.log(outer);
+                console.log(xml);
                 return xml;
             default:
                 return xml;
@@ -221,6 +239,8 @@ export class Api_Parent_02 extends Api_Parent_01 {
                     var NodeTTCKY = this.InsertCKSBHXH(xml, TTCKY, objCKS, 'thue');
                     TTCKYS.appendChild(NodeTTCKY);
                     xml.getElementsByTagName(xml.firstChild.nodeName)[0].appendChild(TTCKYS);
+                    break;
+                case TS24PRO_PROGRAM.KETOAN:
                     break;
                 default: break
             }

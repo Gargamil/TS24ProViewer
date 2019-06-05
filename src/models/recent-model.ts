@@ -47,6 +47,13 @@ export class RecentModel {
     },
     {
         key: {
+            type: TS24PRO_PROGRAM.KETOAN,
+            name: 'iKeToan'
+        },
+        listItem: []
+    },
+    {
+        key: {
             type: 'other',
             name: 'Khác'
         },

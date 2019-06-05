@@ -1,5 +1,6 @@
 export const AppSettings = Object.freeze({
     'URL_API': 'https://www.ts24.com.vn/ts24pro.rs/XSL_MOBILE/',
+    //"URL_API": "http://192.168.11.20:8083/TS24PRO.MOBILE/XSL_MOBILE/",
     'no_image_promotion': 'assets/imgs/no-image-gift.png',
     'icon_discount': 'assets/icon/discount.png',
     'no_image_comp': 'assets/imgs/no-image-restaurant.png',

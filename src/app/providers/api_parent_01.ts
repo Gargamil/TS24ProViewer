@@ -13,7 +13,7 @@ export enum TS24PRO_PROGRAM {
     BHXH = 'xsl/ibh/',
     INVOICE = 'xslts24/',
     INVOICE_VNPT = 'xslvnpt/',
-    KETOAN = ''
+    KETOAN = 'xslketoan/'
 }
 @Injectable()
 export class Api_Parent_01 extends Api_Master {
@@ -38,6 +38,9 @@ export class Api_Parent_01 extends Api_Master {
                     break;
                 case TS24PRO_PROGRAM.INVOICE:
                     pathXSL = await this.getXSLHDDT(2, file_name);
+                    break;
+                case TS24PRO_PROGRAM.KETOAN:
+                    pathXSL = await this.getXSLKETOAN(file_name);
                     break;
                 default:
                     pathXSL = this.url + program_name + file_name + '.xsl';
